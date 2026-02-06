@@ -1,4 +1,5 @@
 #include <iostream>
+#include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
 #define WINDOW_WIDTH 640
@@ -26,6 +27,16 @@ int main()
         glfwTerminate();
         return -1;
     }
+    glfwMakeContextCurrent(window);
+
+    // glad를 활용한 OpenGL 함수 로딩
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cerr << "failed to initialie glad" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    const GLubyte* glVersion = glGetString(GL_VERSION);
+    std::cout << "OpenGL context version: " << glVersion << std::endl;
 
     // glfw loop
     while (!glfwWindowShouldClose(window)) {

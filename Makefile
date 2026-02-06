@@ -11,12 +11,17 @@ GLFWDIR = ./lib/GLFW
 GLFWBUILD = $(GLFWDIR)/build/src
 GLFWLIB = $(GLFWDIR)/include
 
+GLADNAME = glad
+GLADDIR = ./lib/GLAD
+GLADBUILD = $(GLADDIR)/build
+GLADLIB = $(GLADBUILD)/include
+
 $(NAME) : $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o $@ -L$(GLFWBUILD) -l$(GLFWNAME) \
+	$(CXX) $(CXXFLAGS) $^ -o $@ -L$(GLADBUILD) -l$(GLADNAME) -L$(GLFWBUILD) -l$(GLFWNAME) \
 		-lGL -lX11 -lXrandr -lXi -lXcursor -lm -ldl -lpthread
 
 %.o : %.cpp
-	$(CXX) $(CXXFLAGS) -I$(GLFWLIB) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(GLADLIB) -I$(GLFWLIB) -c $< -o $@
 
 all : $(NAME)
 

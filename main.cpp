@@ -6,6 +6,32 @@
 #define WINDOW_HEIGHT 480
 #define WINDOW_NAME "Hello, OpenGL!"
 
+// window의 프레임버퍼 크기 변경
+void OnFramebufferSizeChange(GLFWwindow* window, int width, int height) {
+    std::cout << "framebuffer size changed: (" << width << " x " << height << ")" << std::endl;
+    glViewport(0, 0, width, height);
+}
+
+// 키보드 입력 콜백
+void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    std::cout << "key: " << key \
+        << ", scancode: " << scancode \
+        << ", action: " << (action == GLFW_PRESS ? "Pressed" :
+        action == GLFW_RELEASE ? "Released" :
+        action == GLFW_REPEAT ? "Repeat" : "Unknown") \
+        << ", mods: " << (mods & GLFW_MOD_CONTROL ? "C" : "-",
+        mods & GLFW_MOD_SHIFT ? "S" : "-",
+        mods & GLFW_MOD_ALT ? "A" : "-") << std::endl;
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+}
+
+void Render() {
+    glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
 int main()
 {
     std::cout << "Program Start!" << std::endl;
@@ -38,8 +64,15 @@ int main()
     const GLubyte* glVersion = glGetString(GL_VERSION);
     std::cout << "OpenGL context version: " << glVersion << std::endl;
 
+    OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
+    glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
+    glfwSetKeyCallback(window, OnKeyEvent);
+
     // glfw loop
+    std::cout << "Start main loop" << std::endl;
     while (!glfwWindowShouldClose(window)) {
+        Render();
+        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 

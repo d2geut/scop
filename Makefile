@@ -1,9 +1,13 @@
 NAME = scop
 CXX = c++
-CXFLAGS = -Wall -Wextra -Werror -std=c++11
+CXFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
-SRCS = main.cpp
+SRCSDIR = ./src
+SRCSNAME = main.cpp \
+	common.cpp \
+	shader.cpp
+SRCS = $(addprefix $(SRCSDIR)/, $(SRCSNAME))
 OBJS = $(SRCS:.cpp=.o)
 
 GLFWNAME = glfw3

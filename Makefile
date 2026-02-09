@@ -7,7 +7,8 @@ SRCSDIR = ./src
 SRCSNAME = main.cpp \
 	common.cpp \
 	shader.cpp \
-	program.cpp
+	program.cpp \
+	context.cpp
 SRCS = $(addprefix $(SRCSDIR)/, $(SRCSNAME))
 OBJS = $(SRCS:.cpp=.o)
 

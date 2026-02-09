@@ -4,6 +4,7 @@
 #include "common.h"
 #include "shader.h"
 #include "program.h"
+#include "context.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -28,11 +29,6 @@ void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
-}
-
-void Render() {
-    glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 int main()
@@ -67,13 +63,12 @@ int main()
     const GLubyte* glVersion = glGetString(GL_VERSION);
     std::cout << "OpenGL context version: " << glVersion << std::endl;
 
-    ShaderPtr vertShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
-    ShaderPtr fragShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
-    std::cout << "vertex shader id: " << vertShader->Get() << std::endl;
-    std::cout << "fragment shader id: " << fragShader->Get() << std::endl;
-
-    auto program = Program::Create({fragShader, vertShader});
-    std::cout << "program id: " << program->Get() << std::endl;
+    auto context = Context::Create();
+    if (!context) {
+        std::cerr << "failed to create context" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
 
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
@@ -82,10 +77,11 @@ int main()
     // glfw loop
     std::cout << "Start main loop" << std::endl;
     while (!glfwWindowShouldClose(window)) {
-        Render();
+        context->Render();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+    context.reset(); // 스마트포인터 리셋 방법
 
     glfwTerminate();
     return 0;

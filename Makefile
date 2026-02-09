@@ -6,7 +6,8 @@ RM = rm -f
 SRCSDIR = ./src
 SRCSNAME = main.cpp \
 	common.cpp \
-	shader.cpp
+	shader.cpp \
+	program.cpp
 SRCS = $(addprefix $(SRCSDIR)/, $(SRCSNAME))
 OBJS = $(SRCS:.cpp=.o)
 

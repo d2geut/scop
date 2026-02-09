@@ -1,7 +1,9 @@
 #include <iostream>
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "common.h"
 #include "shader.h"
+#include "program.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -65,10 +67,13 @@ int main()
     const GLubyte* glVersion = glGetString(GL_VERSION);
     std::cout << "OpenGL context version: " << glVersion << std::endl;
 
-    auto vertexShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
-    auto fragmentShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
-    std::cout << "vertex shader id: " << vertexShader->Get() << std::endl;
-    std::cout << "fragment shader id: " << fragmentShader->Get() << std::endl;
+    ShaderPtr vertShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
+    ShaderPtr fragShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
+    std::cout << "vertex shader id: " << vertShader->Get() << std::endl;
+    std::cout << "fragment shader id: " << fragShader->Get() << std::endl;
+
+    auto program = Program::Create({fragShader, vertShader});
+    std::cout << "program id: " << program->Get() << std::endl;
 
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);

@@ -14,6 +14,10 @@ Program::~Program() {
     }
 }
 
+void Program::Use() const {
+    glUseProgram(m_program);
+}
+
 bool Program::Link(const std::vector<ShaderPtr>& shaders) {
     // program 후 shader 붙이기
     m_program = glCreateProgram();

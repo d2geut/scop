@@ -8,7 +8,9 @@ SRCSNAME = main.cpp \
 	common.cpp \
 	shader.cpp \
 	program.cpp \
-	context.cpp
+	context.cpp \
+	buffer.cpp \
+	vertex_layout.cpp
 SRCS = $(addprefix $(SRCSDIR)/, $(SRCSNAME))
 OBJS = $(SRCS:.cpp=.o)
 

@@ -41,6 +41,7 @@ bool Image::LoadBMP(const std::string& filepath) {
     uint32_t biCompression = *reinterpret_cast<uint32_t*>(&filedata[30]);
 
     if ((biBitCount != 24 && biBitCount != 32) || biCompression != 0) {
+        std::cout << "biCompression: " << biCompression << std::endl;
         std::cerr << "falied to open BMP file: " << filepath << " is not supported BMP file" << std::endl;
         return false;
     }

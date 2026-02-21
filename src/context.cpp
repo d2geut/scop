@@ -52,6 +52,11 @@ bool Context::Init() {
         return false;
     std::cout << "program id: " << m_program->Get() << std::endl;
 
+    auto image = Image::Load("./image/wall.bmp");
+    if (!image)
+        return false;
+    std::cout << "image: " << image->GetWidth() << "x" << image->GetHeight() << ", " << image->GetChannelCount() << " channels" << std::endl;
+
     auto loc = glGetUniformLocation(m_program->Get(), "color");
     m_program->Use();
     glUniform4f(loc, 1.0f, 1.0f, 0.0f, 1.0f);

@@ -13,3 +13,14 @@ std::optional<std::string> LoadTextFile(const std::string& filename) {
     text << fin.rdbuf();
     return text.str();
 }
+
+bool isBMPFile(const std::string& filename) {
+    size_t length = filename.length();
+    if (length < 4)
+        return false;
+
+    std::string fileformat = filename.substr(filename.length()-4);
+    if (fileformat != ".bmp")
+        return false;
+    return true;
+}

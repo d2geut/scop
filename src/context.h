@@ -6,6 +6,7 @@
 #include "program.h"
 #include "buffer.h"
 #include "vertex_layout.h"
+#include "image.h"
 
 CLASS_PTR(Context)
 class Context {

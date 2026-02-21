@@ -10,7 +10,8 @@ SRCSNAME = main.cpp \
 	program.cpp \
 	context.cpp \
 	buffer.cpp \
-	vertex_layout.cpp
+	vertex_layout.cpp \
+	image.cpp
 SRCS = $(addprefix $(SRCSDIR)/, $(SRCSNAME))
 OBJS = $(SRCS:.cpp=.o)
 

@@ -51,13 +51,14 @@ bool Image::LoadBMP(const std::string& filepath) {
     m_height = abs(biHeight);
     m_channelCount = biBitCount / 8;
     m_data = (uint8_t*)malloc(m_width * m_height * m_channelCount);
+    memset(m_data, 0, sizeof(m_width * m_height * m_channelCount));
     if (!m_data)
         return false;
-    
+
     // pixel data setting
     int32_t rowSize = (m_width * m_channelCount + 3) & (~3);
     for (int i = 0; i < m_height; i++) {
-        memcpy(m_data + i * m_width * m_channelCount, filedata.c_str() + bfOffBits + i * rowSize, m_width);
+        memcpy(m_data + i * m_width * m_channelCount, filedata.c_str() + bfOffBits + i * rowSize, m_width * m_channelCount);
     }
 
     // BGR to RGB

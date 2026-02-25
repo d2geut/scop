@@ -47,6 +47,8 @@
         "typeinfo": "cpp",
         "fstream": "cpp",
         "sstream": "cpp",
-        "common.h": "c"
+        "common.h": "c",
+        "ctime": "cpp",
+        "iomanip": "cpp"
     }
 }

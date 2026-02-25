@@ -56,7 +56,7 @@ bool Context::Init() {
 
     glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
 
-    auto image = Image::Load("./image/wall.bmp");
+    auto image = Image::Load("./image/awesomeface.bmp");
     if (!image)
         return false;
     std::cout << "image: " << image->GetWidth() << "x" << image->GetHeight() << ", " << image->GetChannelCount() << " channels" << std::endl;

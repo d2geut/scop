@@ -56,7 +56,7 @@ bool Context::Init() {
 
     glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
 
-    auto image = Image::Load("./image/awesomeface.bmp");
+    auto image = Image::Load("./image/container.bmp");
     if (!image)
         return false;
     std::cout << "image: " << image->GetWidth() << "x" << image->GetHeight() << ", " << image->GetChannelCount() << " channels" << std::endl;
@@ -64,8 +64,19 @@ bool Context::Init() {
     // Texture Generate
     m_texture = Texture::CreateFromImage(image.get());
 
+    auto image2 = Image::Load("./image/awesomeface.bmp");
+    if (!image2)
+        return false;
+    m_texture2 = Texture::CreateFromImage(image2.get());
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texture->Get());
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_texture2->Get());
+
     m_program->Use();
     glUniform1i(glGetUniformLocation(m_program->Get(), "tex"), 0);
+    glUniform1i(glGetUniformLocation(m_program->Get(), "tex2"), 1);
 
     return true;
 }

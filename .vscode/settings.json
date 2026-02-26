@@ -50,5 +50,6 @@
         "common.h": "c",
         "ctime": "cpp",
         "iomanip": "cpp"
-    }
+    },
+    "cmake.ignoreCMakeListsMissing": true
 }

@@ -1,5 +1,6 @@
 #include "context.h"
 #include <iostream>
+#include "./sglm/sglm.h"
 
 ContextUPtr Context::Create() {
     auto context = ContextUPtr(new Context());
@@ -77,6 +78,19 @@ bool Context::Init() {
     m_program->Use();
     glUniform1i(glGetUniformLocation(m_program->Get(), "tex"), 0);
     glUniform1i(glGetUniformLocation(m_program->Get(), "tex2"), 1);
+
+    // 위치 (1, 0, 0)의 점. 동차좌표계 사용
+    sglm::vec4 vec(1.0f,  0.0f, 0.0f, 1.0f);
+    // 단위행렬 기준 (1, 1, 0)만큼 평행이동하는 행렬
+    auto trans = sglm::translate(sglm::mat4(1.0f), sglm::vec3(1.0f, 1.0f, 0.0f));
+    // 단위행렬 기준 z축으로 90도만큼 회전하는 행렬
+    auto rot = sglm::rotate(sglm::mat4(1.0f),
+        sglm::radians(90.0f), sglm::vec3(0.0f, 0.0f, 1.0f));
+    // 단위행렬 기준 모든 축에 대해 3배율 확대하는 행렬
+    auto scale = sglm::scale(sglm::mat4(1.0f), sglm::vec3(3.0f));
+    // 확대 -> 회전 -> 평행이동 순으로 점에 선형 변환 적용
+    vec = trans * rot * scale * vec;
+    std::cout << "transformed vec: [" << vec.x << ", " << vec.y << ", " << vec.z << "]" << std::endl;
 
     return true;
 }

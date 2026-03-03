@@ -73,11 +73,14 @@ namespace sglm {
     mat4 rotate(const mat4& m, float angle, const vec3& r) {
         float s = std::sin(angle);
         float c = std::cos(angle);
+        float omc = 1.0f - c;
 
-        return mat4(c + pow(r.x, 2) * (1-c), r.y * r.x * (1-c) + r.z * s, r.z * r.x * (1-c) - r.y * s, 0,
-            r.x * r.y * (1-c) - r.z * s, c + pow(r.y, 2) * (1-c), r.z * r.y * (1-c) + r.x * s, 0,
-            r.x * r.z * (1-c) + r.y * s, r.y * r.z * (1-c) - r.x * s, c + pow(r.z, 2) * (1-c), 0,
+        mat4 rot = mat4(c + pow(r.x, 2) * omc, r.y * r.x * omc + r.z * s, r.z * r.x * omc - r.y * s, 0,
+            r.x * r.y * omc - r.z * s, c + pow(r.y, 2) * omc, r.z * r.y * omc + r.x * s, 0,
+            r.x * r.z * omc + r.y * s, r.y * r.z * omc - r.x * s, c + pow(r.z, 2) * omc, 0,
             0, 0, 0, 1);
+        
+        return m * rot;
     }
 
     mat4 scale(const mat4& m, const vec3& v) {

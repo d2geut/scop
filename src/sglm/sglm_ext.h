@@ -9,6 +9,12 @@ namespace sglm {
     float radians(float r) {
         return r * (PI / 180);
     }
+
+    // dataÀÇ raw potiner
+    template <typename T>
+    const float* value_ptr(const T& v) {
+        return &(v.data[0]);
+    }
 };
 
 

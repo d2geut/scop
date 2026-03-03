@@ -32,6 +32,11 @@ namespace sglm {
 
             return data[i];
         }
+
+        // 데이터 포인터 넘기기
+        const float* value_ptr() const {
+            return &data[0];
+        }
     };
 
     // 덧셈

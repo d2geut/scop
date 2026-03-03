@@ -13,8 +13,8 @@ namespace sglm {
         };
 
         // 생성자
-        vec3() :  x(0.0f), y(0.0f), z(0.0f) {}
-        explicit vec3(float _s) :  x(_s), y(_s), z(_s) {}
+        vec3() : x(0.0f), y(0.0f), z(0.0f) {}
+        explicit vec3(float _s) : x(_s), y(_s), z(_s) {}
         vec3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
 
         // 배열 인덱스 연산자 [] 오버로딩
@@ -29,6 +29,11 @@ namespace sglm {
             assert(i < 3);
 
             return data[i];
+        }
+
+        // 데이터 포인터 넘기기
+        const float* value_ptr() const {
+            return &data[0];
         }
     };
 

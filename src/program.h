@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "shader.h"
+#include "./sglm/sglm.h"
 #include <vector>
 
 CLASS_PTR(Program)
@@ -13,6 +14,8 @@ public:
     ~Program();
     uint32_t Get() const { return m_program; }
     void Use() const;
+    void SetUniform(const std::string& name, int value) const;
+    void SetUniform(const std::string& name, const sglm::mat4& value) const;
 private:
     Program() {}
     bool Link(const std::vector<ShaderPtr>& shaders);

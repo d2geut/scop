@@ -96,8 +96,8 @@ bool Context::Init() {
     glBindTexture(GL_TEXTURE_2D, m_texture2->Get());
 
     m_program->Use();
-    glUniform1i(glGetUniformLocation(m_program->Get(), "tex"), 0);
-    glUniform1i(glGetUniformLocation(m_program->Get(), "tex2"), 1);
+    m_program->SetUniform("tex", 0);
+    m_program->SetUniform("tex2", 1);
 
     // x축으로 -55도 회전
     auto model = sglm::rotate(sglm::mat4(1.0f),   
@@ -109,8 +109,7 @@ bool Context::Init() {
     auto projection = sglm::perspective(sglm::radians(45.0f),
         (float)640 / (float)480, 0.01f, 10.0f);
     auto transform = projection * view * model;
-    auto transformLoc = glGetUniformLocation(m_program->Get(), "transform");
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, sglm::value_ptr(transform));
+    m_program->SetUniform("transform", transform);
 
     return true;
 }

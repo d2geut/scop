@@ -18,6 +18,16 @@ void Program::Use() const {
     glUseProgram(m_program);
 }
 
+void Program::SetUniform(const std::string& name, int value) const {
+    auto loc = glGetUniformLocation(m_program, name.c_str());
+    glUniform1i(loc, value);
+}
+
+void Program::SetUniform(const std::string& name, const sglm::mat4& value) const {
+    auto loc = glGetUniformLocation(m_program, name.c_str());
+    glUniformMatrix4fv(loc, 1, GL_FALSE, sglm::value_ptr(value));
+}
+
 bool Program::Link(const std::vector<ShaderPtr>& shaders) {
     // program 후 shader 붙이기
     m_program = glCreateProgram();

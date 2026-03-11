@@ -86,6 +86,20 @@ namespace sglm {
     mat4 scale(const mat4& m, const vec3& v) {
         return mat4(m[0] * v.x, m[1] * v.y, m[2] * v.z, m[3]);
     }
+
+    mat4 perspective(float fovy, float aspect, float near, float far) {
+        float tanHalfFovy = tan(fovy / 2.0f);
+
+        mat4 result(0.0f);
+
+        result[0][0] = 1.0f / (aspect * tanHalfFovy);
+        result[1][1] = 1.0f / tanHalfFovy;
+        result[2][2] = -(far + near) / (far - near);
+        result[2][3] = -1;
+        result[3][2] = -(2.0f * far * near) / (far - near);
+
+        return result;
+    }
 }
 
 #endif

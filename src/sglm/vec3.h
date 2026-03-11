@@ -38,28 +38,34 @@ namespace sglm {
     };
 
     // µ¡¼À
-    vec3 operator+(const vec3& v1, const vec3& v2) {
+    inline vec3 operator+(const vec3& v1, const vec3& v2) {
         return vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
     }
     // »¬¼À
-    vec3 operator-(const vec3& v1, const vec3& v2) {
+    inline vec3 operator-(const vec3& v1, const vec3& v2) {
         return vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
     }
     // ½ºÄ®¶ó °ö¼À
-    vec3 operator*(const vec3& v, float s) {
+    inline vec3 operator*(const vec3& v, float s) {
         return vec3(v.x * s, v.y * s, v.z * s);
     }
     // dot product
-    float dot(const vec3& v1, const vec3& v2) {
+    inline float dot(const vec3& v1, const vec3& v2) {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     }
     // cross product
-    vec3 cross(const vec3& v1, const vec3& v2) {
+    inline vec3 cross(const vec3& v1, const vec3& v2) {
         return vec3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y - v2.x);
     }
     // length
-    float length(const vec3& v) {
+    inline float length(const vec3& v) {
         return sqrt(pow(v.x, 2) + pow(v.y, 2) + pow(v.z, 2));
+    }
+    // normalize
+    inline vec3 normalize(const vec3& v) {
+        float l = length(v);
+
+        return vec3(v.x / l, v.y / l, v.z / l);
     }
 }
 

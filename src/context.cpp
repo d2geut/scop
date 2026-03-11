@@ -115,7 +115,32 @@ bool Context::Init() {
 }
 
 void Context::Render() {
+    std::vector<sglm::vec3> cubePositions = {
+        sglm::vec3(0.0f, 0.0f, 0.0f),
+        sglm::vec3(2.0f, 5.0f, -15.0f),
+        sglm::vec3(-1.5f, -2.2f, -2.5f),
+        sglm::vec3(-3.8f, -2.0f, -12.3f),
+        sglm::vec3(2.4f, -0.4f, -3.5f),
+        sglm::vec3(-1.7f, 3.0f, -7.5f),
+        sglm::vec3(1.3f, -2.0f, -2.5f),
+        sglm::vec3(1.5f, 2.0f, -2.5f),
+        sglm::vec3(1.5f, 0.2f, -1.5f),
+        sglm::vec3(-1.3f, 1.0f, -1.5f),
+    };
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+    m_program->Use();
+    auto projection = sglm::perspective(sglm::radians(45.0f), (float)640 / (float)480, 0.01f, 20.0f);
+    auto view = sglm::translate(sglm::mat4(1.0f), sglm::vec3(0.0f, 0.0f, -3.0f));
+
+    for (size_t i = 0; i < cubePositions.size(); i++) {
+        auto& pos = cubePositions[i];
+        auto model = sglm::translate(sglm::mat4(1.0f), pos);
+        model = sglm::rotate(model, sglm::radians((float)glfwGetTime() * 120.0f + 20.0f * (float)i), sglm::vec3(1.0f, 0.5f, 0.0f));
+        auto transform = projection * view * model;
+        m_program->SetUniform("transform", transform);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    }
 }

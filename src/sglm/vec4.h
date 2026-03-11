@@ -40,23 +40,23 @@ namespace sglm {
     };
 
     // µ¡¼À
-    vec4 operator+(const vec4& v1, const vec4& v2) {
+    inline vec4 operator+(const vec4& v1, const vec4& v2) {
         return vec4(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w);
     }
     // »¬¼À
-    vec4 operator-(const vec4& v1, const vec4& v2) {
+    inline vec4 operator-(const vec4& v1, const vec4& v2) {
         return vec4(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w);
     }
     // ½ºÄ®¶ó °ö¼À
-    vec4 operator*(const vec4& v, float s) {
+    inline vec4 operator*(const vec4& v, float s) {
         return vec4(v.x * s, v.y * s, v.z * s, v.w * s);
     }
     // dot product
-    float dot(const vec4& v1, const vec4& v2) {
+    inline float dot(const vec4& v1, const vec4& v2) {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
     }
     // length
-    float length(const vec4& v) {
+    inline float length(const vec4& v) {
         return sqrt(pow(v.x, 2) + pow(v.y, 2) + pow(v.z, 2) + pow(v.w, 2));
     }
 }

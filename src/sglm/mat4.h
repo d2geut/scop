@@ -53,11 +53,11 @@ namespace sglm {
         }
     };
 
-    vec4 operator*(const mat4& m, const vec4& v) {
+    inline vec4 operator*(const mat4& m, const vec4& v) {
         return m[0] * v.x + m[1] * v.y + m[2] * v.z + m[3] * v.w;
     }
 
-    mat4 operator*(const mat4& m1, const mat4& m2) {
+    inline mat4 operator*(const mat4& m1, const mat4& m2) {
         mat4 result;
 
         for (int col = 0; col < 4; col++) {
@@ -66,28 +66,29 @@ namespace sglm {
         return result;
     }
 
-    mat4 translate(const mat4& m, const vec3& v) {
+    inline mat4 translate(const mat4& m, const vec3& v) {
         return mat4(m.value[0], m.value[1], m.value[2], m.value[3] + vec4(v, 0.0f));
     }
     
-    mat4 rotate(const mat4& m, float angle, const vec3& r) {
+    inline mat4 rotate(const mat4& m, float angle, const vec3& r) {
         float s = std::sin(angle);
         float c = std::cos(angle);
         float omc = 1.0f - c;
+        vec3 unitR = sglm::normalize(r);
 
-        mat4 rot = mat4(c + pow(r.x, 2) * omc, r.y * r.x * omc + r.z * s, r.z * r.x * omc - r.y * s, 0,
-            r.x * r.y * omc - r.z * s, c + pow(r.y, 2) * omc, r.z * r.y * omc + r.x * s, 0,
-            r.x * r.z * omc + r.y * s, r.y * r.z * omc - r.x * s, c + pow(r.z, 2) * omc, 0,
+        mat4 rot = mat4(c + pow(unitR.x, 2) * omc, unitR.y * unitR.x * omc + unitR.z * s, unitR.z * unitR.x * omc - unitR.y * s, 0,
+            unitR.x * unitR.y * omc - unitR.z * s, c + pow(unitR.y, 2) * omc, unitR.z * unitR.y * omc + unitR.x * s, 0,
+            unitR.x * unitR.z * omc + unitR.y * s, unitR.y * unitR.z * omc - unitR.x * s, c + pow(unitR.z, 2) * omc, 0,
             0, 0, 0, 1);
         
         return m * rot;
     }
 
-    mat4 scale(const mat4& m, const vec3& v) {
+    inline mat4 scale(const mat4& m, const vec3& v) {
         return mat4(m[0] * v.x, m[1] * v.y, m[2] * v.z, m[3]);
     }
 
-    mat4 perspective(float fovy, float aspect, float near, float far) {
+    inline mat4 perspective(float fovy, float aspect, float near, float far) {
         float tanHalfFovy = tan(fovy / 2.0f);
 
         mat4 result(0.0f);

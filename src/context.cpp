@@ -1,6 +1,7 @@
 #include "context.h"
 #include <iostream>
 #include "./sglm/sglm.h"
+#include "constants.h"
 
 ContextUPtr Context::Create() {
     auto context = ContextUPtr(new Context());
@@ -107,7 +108,7 @@ bool Context::Init() {
         sglm::vec3(0.0f, 0.0f, -3.0f));
     // 종횡비 4:3, 세로화각 45도의 원근 투영
     auto projection = sglm::perspective(sglm::radians(45.0f),
-        (float)640 / (float)480, 0.01f, 10.0f);
+        (float)Constants::WindowWidth / (float)Constants::WindowHeight, 0.01f, 10.0f);
     auto transform = projection * view * model;
     m_program->SetUniform("transform", transform);
 
@@ -132,7 +133,7 @@ void Context::Render() {
     glEnable(GL_DEPTH_TEST);
 
     m_program->Use();
-    auto projection = sglm::perspective(sglm::radians(45.0f), (float)640 / (float)480, 0.01f, 20.0f);
+    auto projection = sglm::perspective(sglm::radians(45.0f), (float)Constants::WindowWidth / (float)Constants::WindowHeight, 0.01f, 20.0f);
     auto view = sglm::translate(sglm::mat4(1.0f), sglm::vec3(0.0f, 0.0f, -3.0f));
 
     for (size_t i = 0; i < cubePositions.size(); i++) {

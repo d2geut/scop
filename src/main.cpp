@@ -5,10 +5,7 @@
 #include "shader.h"
 #include "program.h"
 #include "context.h"
-
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
-#define WINDOW_NAME "Hello, OpenGL!"
+#include "constants.h"
 
 // window의 프레임버퍼 크기 변경
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height) {
@@ -46,7 +43,7 @@ int main()
 
     // glfw 윈도우 생성
     std::cout << "Create glfw window" << std::endl;
-    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(Constants::WindowWidth, Constants::WindowHeight, Constants::WindowName, nullptr, nullptr);
     if (!window) {
         std::cerr << "failed to create glfw window" << std::endl;
         glfwTerminate();
@@ -70,7 +67,7 @@ int main()
         return -1;
     }
 
-    OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
+    OnFramebufferSizeChange(window, Constants::WindowWidth, Constants::WindowHeight);
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
     glfwSetKeyCallback(window, OnKeyEvent);
 

@@ -134,10 +134,14 @@ void Context::Render() {
 
     m_program->Use();
     auto projection = sglm::perspective(sglm::radians(45.0f), (float)Constants::WindowWidth / (float)Constants::WindowHeight, 0.01f, 20.0f);
-    auto view = sglm::translate(sglm::mat4(1.0f), sglm::vec3(0.0f, 0.0f, -3.0f));
+
+    auto cameraPos = sglm::vec3(0.0f, 0.0f, 3.0f);
+    auto cameraTarget = sglm::vec3(0.0f, 0.0f, 0.0f);
+    auto cameraUp = sglm::vec3(0.0f, 1.0f, 0.0f);
+    auto view = sglm::lookAt(cameraPos, cameraTarget, cameraUp);
 
     for (size_t i = 0; i < cubePositions.size(); i++) {
-        auto& pos = cubePositions[i];
+        auto& pos = cubePositions[i];   
         auto model = sglm::translate(sglm::mat4(1.0f), pos);
         model = sglm::rotate(model, sglm::radians((float)glfwGetTime() * 120.0f + 20.0f * (float)i), sglm::vec3(1.0f, 0.5f, 0.0f));
         auto transform = projection * view * model;

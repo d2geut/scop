@@ -101,6 +101,29 @@ namespace sglm {
 
         return result;
     }
+
+    inline mat4 lookAt(const vec3& eye, const vec3& at, const vec3& up) {
+        vec3 cameraZ = sglm::normalize(eye - at);
+        vec3 cameraX = sglm::normalize(sglm::cross(up, cameraZ));
+        vec3 cameraY = sglm::cross(cameraZ, cameraX);
+
+        mat4 result(1.0f);
+
+        result[0][0] = cameraX.x;
+        result[1][0] = cameraX.y;
+        result[2][0] = cameraX.z;
+        result[0][1] = cameraY.x;
+        result[1][1] = cameraY.y;
+        result[2][1] = cameraY.z;
+        result[0][2] = cameraZ.x;
+        result[1][2] = cameraZ.y;
+        result[2][2] = cameraZ.z;
+        result[3][0] = -sglm::dot(cameraX, eye);
+        result[3][1] = -sglm::dot(cameraY, eye);
+        result[3][2] = -sglm::dot(cameraZ, eye);
+
+        return result;
+    }
 }
 
 #endif

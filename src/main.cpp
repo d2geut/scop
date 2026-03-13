@@ -13,7 +13,8 @@ Input& g_input = Input::instance();
 // window의 프레임버퍼 크기 변경
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height) {
     std::cout << "framebuffer size changed: (" << width << " x " << height << ")" << std::endl;
-    glViewport(0, 0, width, height);
+    auto context = (Context*)glfwGetWindowUserPointer(window);
+    context->Reshape(width, height);
 }
 
 int main()
@@ -54,6 +55,7 @@ int main()
         glfwTerminate();
         return -1;
     }
+    glfwSetWindowUserPointer(window, context.get()); // user pointer를 통해 glfw callback에 context 전달
 
     OnFramebufferSizeChange(window, Constants::WindowWidth, Constants::WindowHeight);
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);

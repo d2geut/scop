@@ -9,6 +9,12 @@ ContextUPtr Context::Create() {
     return std::move(context);
 }
 
+void Context::Reshape(int width, int height) {
+    m_width = width;
+    m_height = height;
+    glViewport(0, 0, m_width, m_height);
+}
+
 void Context::ProcessInput(GLFWwindow* window, float deltaTime) {
     const float cameraSpeed = 2.0f * deltaTime;
 
@@ -49,7 +55,7 @@ void Context::Render() {
     glEnable(GL_DEPTH_TEST);
 
     m_program->Use();
-    auto projection = sglm::perspective(sglm::radians(45.0f), (float)Constants::WindowWidth / (float)Constants::WindowHeight, 0.01f, 20.0f);
+    auto projection = sglm::perspective(sglm::radians(45.0f), (float)m_width / (float)m_height, 0.01f, 20.0f);
     auto view = sglm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
 
     for (size_t i = 0; i < cubePositions.size(); i++) {

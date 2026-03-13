@@ -6,26 +6,14 @@
 #include "program.h"
 #include "context.h"
 #include "constants.h"
+#include "input.h"
+
+Input& g_input = Input::instance();
 
 // window의 프레임버퍼 크기 변경
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height) {
     std::cout << "framebuffer size changed: (" << width << " x " << height << ")" << std::endl;
     glViewport(0, 0, width, height);
-}
-
-// 키보드 입력 콜백
-void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    std::cout << "key: " << key \
-        << ", scancode: " << scancode \
-        << ", action: " << (action == GLFW_PRESS ? "Pressed" :
-        action == GLFW_RELEASE ? "Released" :
-        action == GLFW_REPEAT ? "Repeat" : "Unknown") \
-        << ", mods: " << (mods & GLFW_MOD_CONTROL ? "C" : "-",
-        mods & GLFW_MOD_SHIFT ? "S" : "-",
-        mods & GLFW_MOD_ALT ? "A" : "-") << std::endl;
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, true);
-    }
 }
 
 int main()
@@ -69,14 +57,22 @@ int main()
 
     OnFramebufferSizeChange(window, Constants::WindowWidth, Constants::WindowHeight);
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
-    glfwSetKeyCallback(window, OnKeyEvent);
+    glfwSetKeyCallback(window, Input::OnKeyEvent);
+    // glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE); // test 용
 
     // glfw loop
     std::cout << "Start main loop" << std::endl;
+
+    float currentFrame, lastFrame, deltaTime = 0;
     while (!glfwWindowShouldClose(window)) {
+        currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        glfwPollEvents();
+        context->ProcessInput(window, deltaTime);
         context->Render();
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
     context.reset(); // 스마트포인터 리셋 방법
 

@@ -18,6 +18,8 @@ public:
     void Render();
     void ProcessInput(GLFWwindow* window, float deltaTime);
     void Reshape(int width, int height);
+    void MouseMove(double x, double y);
+    void MouseButton(int button, int action, double x, double y);
 private:
     Context() {}
     bool Init();
@@ -34,6 +36,10 @@ private:
     int m_height { Constants::WindowHeight };
 
     // camera parameter
+    bool m_cameraControl { false };
+    sglm::vec2 m_prevMousePos { sglm::vec2(0.0f) };
+    float m_cameraPitch { 0.0f };
+    float m_cameraYaw { 0.0f };
     sglm::vec3 m_cameraPos { sglm::vec3(0.0f, 0.0f, 3.0f) };
     sglm::vec3 m_cameraFront { sglm::vec3(0.0f, 0.0f, -1.0f) };
     sglm::vec3 m_cameraUp { sglm::vec3(0.0f, 1.0f, 0.0f) };

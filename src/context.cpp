@@ -37,6 +37,41 @@ void Context::ProcessInput(GLFWwindow* window, float deltaTime) {
         m_cameraPos -= cameraUp * cameraSpeed;
 }
 
+void Context::MouseMove(double x, double y) {
+    if (!m_cameraControl)
+        return;
+    auto pos = sglm::vec2((float)x, (float)y);
+    auto deltaPos = pos - m_prevMousePos;
+
+    const float cameraRotSpeed = 0.5f;
+    m_cameraYaw -= deltaPos.x * cameraRotSpeed;
+    m_cameraPitch -= deltaPos.y * cameraRotSpeed;
+
+    if (m_cameraYaw < 0.0f)
+        m_cameraYaw += 360.0f;
+    if (m_cameraYaw > 360.0f)
+        m_cameraYaw -= 360.0f;
+    if (m_cameraPitch > 89.0f)
+        m_cameraPitch = 89.0f;
+    if (m_cameraPitch < -89.0f)
+        m_cameraPitch = -89.0f;
+    
+    m_prevMousePos = pos;
+}
+
+void Context::MouseButton(int button, int action, double x, double y) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        if (action == GLFW_PRESS) {
+            // 마우스 조작 시작 시점에 현 마우스 커서 위치 저장
+            m_prevMousePos = sglm::vec2((float)x, (float)y);
+            m_cameraControl = true;
+        }
+        else if (action == GLFW_RELEASE) {
+            m_cameraControl = false;
+        }
+    }
+}
+
 void Context::Render() {
     std::vector<sglm::vec3> cubePositions = {
         sglm::vec3(0.0f, 0.0f, 0.0f),
@@ -55,6 +90,8 @@ void Context::Render() {
     glEnable(GL_DEPTH_TEST);
 
     m_program->Use();
+    sglm::vec4 cameraFront = sglm::rotate(sglm::mat4(1.0f), sglm::radians(m_cameraYaw), sglm::vec3(0.0f, 1.0f, 0.0f)) * sglm::rotate(sglm::mat4(1.0f), sglm::radians(m_cameraPitch), sglm::vec3(1.0f, 0.0f, 0.0f)) * sglm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+    m_cameraFront = sglm::vec3(cameraFront.x, cameraFront.y, cameraFront.z);
     auto projection = sglm::perspective(sglm::radians(45.0f), (float)m_width / (float)m_height, 0.01f, 20.0f);
     auto view = sglm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
 

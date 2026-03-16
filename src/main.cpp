@@ -17,6 +17,18 @@ void OnFramebufferSizeChange(GLFWwindow* window, int width, int height) {
     context->Reshape(width, height);
 }
 
+void OnCursorPos(GLFWwindow* window, double x, double y) {
+    auto context = (Context*)glfwGetWindowUserPointer(window);
+    context->MouseMove(x, y);
+}
+
+void OnMouseButton(GLFWwindow* window, int button, int action, int modifier) {
+    auto context = (Context*)glfwGetWindowUserPointer(window);
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+    context->MouseButton(button, action, x, y);
+}
+
 int main()
 {
     std::cout << "Program Start!" << std::endl;
@@ -60,7 +72,8 @@ int main()
     OnFramebufferSizeChange(window, Constants::WindowWidth, Constants::WindowHeight);
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
     glfwSetKeyCallback(window, Input::OnKeyEvent);
-    // glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE); // test ¿ë
+    glfwSetCursorPosCallback(window, OnCursorPos);
+    glfwSetMouseButtonCallback(window, OnMouseButton);
 
     // glfw loop
     std::cout << "Start main loop" << std::endl;

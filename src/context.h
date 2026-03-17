@@ -35,6 +35,9 @@ private:
     int m_width { Constants::WindowWidth };
     int m_height { Constants::WindowHeight };
 
+    // clear color
+    sglm::vec4 m_clearColor { sglm::vec4(0.1f, 0.2f, 0.3f, 0.0f) };
+
     // camera parameter
     bool m_cameraControl { false };
     sglm::vec2 m_prevMousePos { sglm::vec2(0.0f) };

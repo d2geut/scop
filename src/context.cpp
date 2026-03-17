@@ -171,7 +171,7 @@ bool Context::Init() {
         return false;
     std::cout << "program id: " << m_program->Get() << std::endl;
 
-    glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
+    glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 
     auto image = Image::Load("./image/container.bmp");
     if (!image)

@@ -35,8 +35,17 @@ private:
     int m_width { Constants::WindowWidth };
     int m_height { Constants::WindowHeight };
 
+    // animation - 이후 삭제
+    bool m_animation { true };
+
     // clear color
     sglm::vec4 m_clearColor { sglm::vec4(0.1f, 0.2f, 0.3f, 0.0f) };
+
+    // light 
+    sglm::vec3 m_lightPos { sglm::vec3(3.0f, 3.0f, 3.0f) };
+    sglm::vec3 m_lightColor { sglm::vec3(1.0f, 1.0f, 1.0f) };
+    sglm::vec3 m_objectColor { sglm::vec3(1.0f, 0.5f, 0.0f) };
+    float m_ambientStrength { 0.3f };
 
     // camera parameter
     bool m_cameraControl { false };

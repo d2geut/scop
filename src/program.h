@@ -15,6 +15,8 @@ public:
     uint32_t Get() const { return m_program; }
     void Use() const;
     void SetUniform(const std::string& name, int value) const;
+    void SetUniform(const std::string& name, float value) const;
+    void SetUniform(const std::string& name, const sglm::vec3& value) const;
     void SetUniform(const std::string& name, const sglm::mat4& value) const;
 private:
     Program() {}

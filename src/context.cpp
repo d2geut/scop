@@ -35,6 +35,10 @@ void Context::ProcessInput(GLFWwindow* window, float deltaTime) {
         m_cameraPos += cameraUp * cameraSpeed;
     if (Input::IsKeyDown(GLFW_KEY_Q))
         m_cameraPos -= cameraUp * cameraSpeed;
+
+    // space
+    if (Input::IsKeyDown(GLFW_KEY_SPACE))
+        m_animation ? (m_animation = false) : (m_animation = true);
 }
 
 void Context::MouseMove(double x, double y) {
@@ -94,30 +98,28 @@ void Context::Render() {
     auto projection = sglm::perspective(sglm::radians(45.0f), (float)m_width / (float)m_height, 0.01f, 20.0f);
     auto view = sglm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
 
-    m_program->Use();
     // light cube
-    // auto lightModelTransform = sglm::translate(sglm::mat4(1.0), m_light.position) * sglm::scale(sglm::mat4(1.0), sglm::vec3(0.1f));
-    // m_program->SetUniform("light.position", m_light.position);
-    // m_program->SetUniform("light.ambient", m_light.ambient);
-    // m_program->SetUniform("light.diffuse", m_light.diffuse);
-    // m_program->SetUniform("light.specular", m_light.specular);
-    // m_program->SetUniform("material.ambient", sglm::vec3(1.0f, 1.0f, 1.0f));
-    // m_program->SetUniform("material.diffuse", sglm::vec3(1.0f, 1.0f, 1.0f));
-    // m_program->SetUniform("material.specular", sglm::vec3(1.0f, 1.0f, 1.0f));
-    // m_program->SetUniform("material.shininess", 100.0f);
-    // m_program->SetUniform("transform", projection * view * lightModelTransform);
-    // m_program->SetUniform("modelTransform", lightModelTransform);
-    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    auto lightModelTransform = sglm::translate(sglm::mat4(1.0), m_light.position) * sglm::scale(sglm::mat4(1.0), sglm::vec3(0.1f));
+    m_simpleProgram->Use();
+    m_simpleProgram->SetUniform("color", sglm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
+    m_simpleProgram->SetUniform("transform", projection * view * lightModelTransform);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
+    m_program->Use();
     m_program->SetUniform("viewPos", m_cameraPos);
     m_program->SetUniform("light.position", m_light.position);
+    m_program->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
     m_program->SetUniform("light.ambient", m_light.ambient);
     m_program->SetUniform("light.diffuse", m_light.diffuse);
     m_program->SetUniform("light.specular", m_light.specular);
-    m_program->SetUniform("material.ambient", m_material.ambient);
-    m_program->SetUniform("material.diffuse", m_material.diffuse);
-    m_program->SetUniform("material.specular", m_material.specular);
+    m_program->SetUniform("material.diffuse", 0);
+    m_program->SetUniform("material.specular", 1);
     m_program->SetUniform("material.shininess", m_material.shininess);
+
+    glActiveTexture(GL_TEXTURE0);
+    m_material.diffuse->Bind();
+    glActiveTexture(GL_TEXTURE1);
+    m_material.specular->Bind();
 
     for (size_t i = 0; i < cubePositions.size(); i++) {
         auto& pos = cubePositions[i];   
@@ -186,37 +188,18 @@ bool Context::Init() {
     // EBO Binding
     m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(uint32_t) * 36);
 
-    ShaderPtr vertShader = Shader::CreateFromFile("./shader/lighting.vs", GL_VERTEX_SHADER);
-    ShaderPtr fragShader = Shader::CreateFromFile("./shader/lighting.fs", GL_FRAGMENT_SHADER);
-    if (!vertShader || !fragShader)
+    m_simpleProgram = Program::Create("./shader/simple.vs", "./shader/simple.fs");
+    if (!m_simpleProgram)
         return false;
-    std::cout << "vertex shader id: " << vertShader->Get() << std::endl;
-    std::cout << "fragment shader id: " << fragShader->Get() << std::endl;
 
-    m_program = Program::Create({fragShader, vertShader});
+    m_program = Program::Create("./shader/lighting.vs", "./shader/lighting.fs");
     if (!m_program)
         return false;
-    std::cout << "program id: " << m_program->Get() << std::endl;
 
     glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 
-    auto image = Image::Load("./image/container.bmp");
-    if (!image)
-        return false;
-    std::cout << "image: " << image->GetWidth() << "x" << image->GetHeight() << ", " << image->GetChannelCount() << " channels" << std::endl;
-
-    // Texture Generate
-    m_texture = Texture::CreateFromImage(image.get());
-
-    auto image2 = Image::Load("./image/awesomeface.bmp");
-    if (!image2)
-        return false;
-    m_texture2 = Texture::CreateFromImage(image2.get());
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture->Get());
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, m_texture2->Get());
+    m_material.diffuse = Texture::CreateFromImage(Image::Load("./image/container2.bmp").get());
+    m_material.specular = Texture::CreateFromImage(Image::Load("./image/container2_specular.bmp").get());
 
     return true;
 }

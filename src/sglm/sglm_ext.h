@@ -15,6 +15,14 @@ namespace sglm {
     inline const float* value_ptr(const T& v) {
         return &(v.data[0]);
     }
+
+    inline float max(const float a, const float b) {
+        return (a > b) ? a : b;
+    }
+
+    inline float min(const float a, const float b) {
+        return (a > b) ? b : a;
+    }
 };
 
 

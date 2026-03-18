@@ -24,6 +24,7 @@ private:
     Context() {}
     bool Init();
     ProgramUPtr m_program;
+    ProgramUPtr m_simpleProgram;
 
     VertexLayoutUPtr m_vertexLayout;
     BufferUPtr m_vertexBuffer;
@@ -35,7 +36,7 @@ private:
     int m_width { Constants::WindowWidth };
     int m_height { Constants::WindowHeight };
 
-    // animation - 이후 삭제
+    // animation - space로 제어
     bool m_animation { true };
 
     // clear color
@@ -43,18 +44,18 @@ private:
 
     // light parameter
     struct Light {
-        sglm::vec3 position { sglm::vec3(3.0f, 3.0f, 3.0f) };
+        sglm::vec3 position { sglm::vec3(2.0f, 2.0f, 2.0f) };
+        float distance { 32.0f };
         sglm::vec3 ambient { sglm::vec3(0.1f, 0.1f, 0.1f) };
-        sglm::vec3 diffuse { sglm::vec3(0.5f, 0.5f, 0.5f) };
+        sglm::vec3 diffuse { sglm::vec3(0.8f, 0.8f, 0.8f) };
         sglm::vec3 specular { sglm::vec3(1.0f, 1.0f, 1.0f) };
     };
     Light m_light;
 
     // material parameter
     struct Material {
-        sglm::vec3 ambient { sglm::vec3(1.0f, 0.5f, 0.3f) };
-        sglm::vec3 diffuse { sglm::vec3(1.0f, 0.5f, 0.3f) };
-        sglm::vec3 specular { sglm::vec3(0.5f, 0.5f, 0.5f) };
+        TextureUPtr diffuse;
+        TextureUPtr specular;
         float shininess { 32.0f };
     };
     Material m_material;

@@ -6,6 +6,7 @@
 #include <optional>
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "./sglm/sglm.h"
 
 #define CLASS_PTR(klassName) \
 class klassName; \
@@ -15,5 +16,6 @@ using klassName ## WPtr = std::weak_ptr<klassName>;
 
 std::optional<std::string> LoadTextFile(const std::string& filename);
 bool isBMPFile(const std::string& filename);
+sglm::vec3 GetAttenuationCoeff(float distance);
 
 #endif

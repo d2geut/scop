@@ -108,7 +108,7 @@ void Context::Render() {
     m_program->Use();
     m_program->SetUniform("viewPos", m_cameraPos);
     m_program->SetUniform("light.position", m_light.position);
-    m_program->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
+    m_program->SetUniform("light.range", m_light.distance);
     m_program->SetUniform("light.ambient", m_light.ambient);
     m_program->SetUniform("light.diffuse", m_light.diffuse);
     m_program->SetUniform("light.specular", m_light.specular);

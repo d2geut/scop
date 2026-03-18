@@ -8,7 +8,7 @@ uniform vec3 viewPos;
 
 struct Light {
     vec3 position;
-    vec3 attenuation;
+    float range;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -27,8 +27,12 @@ void main() {
     vec3 ambient = texColor * light.ambient;
 
     float dist = length(light.position - position);
-    vec3 distPoly = vec3(1.0, dist, dist*dist);
-    float attenuation = 1.0 / dot(distPoly, light.attenuation);
+    float atten = 1.0 / (dist * dist + 1.0);
+    float window = pow(max(1.0 - pow(dist / light.range, 4.0), 0.0), 2.0);
+    float attenuation = atten * window;
+    // float dist = length(light.position - position);
+    // vec3 distPoly = vec3(1.0, dist, dist*dist);
+    // float attenuation = 1.0 / dot(distPoly, light.attenuation);
     vec3 lightDir = (light.position - position) / dist;
     vec3 pixelNorm = normalize(normal);
     float diff = max(dot(pixelNorm, lightDir), 0.0);

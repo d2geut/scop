@@ -41,13 +41,23 @@ private:
     // clear color
     sglm::vec4 m_clearColor { sglm::vec4(0.1f, 0.2f, 0.3f, 0.0f) };
 
-    // light 
-    sglm::vec3 m_lightPos { sglm::vec3(3.0f, 3.0f, 3.0f) };
-    sglm::vec3 m_lightColor { sglm::vec3(1.0f, 1.0f, 1.0f) };
-    sglm::vec3 m_objectColor { sglm::vec3(1.0f, 0.5f, 0.0f) };
-    float m_ambientStrength { 0.3f };
-    float m_specularStrength { 0.5f };
-    float m_specularShininess { 80.0f };
+    // light parameter
+    struct Light {
+        sglm::vec3 position { sglm::vec3(3.0f, 3.0f, 3.0f) };
+        sglm::vec3 ambient { sglm::vec3(0.1f, 0.1f, 0.1f) };
+        sglm::vec3 diffuse { sglm::vec3(0.5f, 0.5f, 0.5f) };
+        sglm::vec3 specular { sglm::vec3(1.0f, 1.0f, 1.0f) };
+    };
+    Light m_light;
+
+    // material parameter
+    struct Material {
+        sglm::vec3 ambient { sglm::vec3(1.0f, 0.5f, 0.3f) };
+        sglm::vec3 diffuse { sglm::vec3(1.0f, 0.5f, 0.3f) };
+        sglm::vec3 specular { sglm::vec3(0.5f, 0.5f, 0.5f) };
+        float shininess { 32.0f };
+    };
+    Material m_material;
 
     // camera parameter
     bool m_cameraControl { false };

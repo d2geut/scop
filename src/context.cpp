@@ -94,24 +94,30 @@ void Context::Render() {
     auto projection = sglm::perspective(sglm::radians(45.0f), (float)m_width / (float)m_height, 0.01f, 20.0f);
     auto view = sglm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
 
-    // light cube
-    auto lightModelTransform = sglm::translate(sglm::mat4(1.0), m_lightPos) * sglm::scale(sglm::mat4(1.0), sglm::vec3(0.1f));
     m_program->Use();
-    m_program->SetUniform("lightPos", m_lightPos);
-    m_program->SetUniform("lightColor", sglm::vec3(1.0f, 1.0f, 1.0f));
-    m_program->SetUniform("objectColor", sglm::vec3(1.0f, 1.0f, 1.0f));
-    m_program->SetUniform("ambientStrength", 1.0f);
-    m_program->SetUniform("transform", projection * view * lightModelTransform);
-    m_program->SetUniform("modelTransform", lightModelTransform);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    // light cube
+    // auto lightModelTransform = sglm::translate(sglm::mat4(1.0), m_light.position) * sglm::scale(sglm::mat4(1.0), sglm::vec3(0.1f));
+    // m_program->SetUniform("light.position", m_light.position);
+    // m_program->SetUniform("light.ambient", m_light.ambient);
+    // m_program->SetUniform("light.diffuse", m_light.diffuse);
+    // m_program->SetUniform("light.specular", m_light.specular);
+    // m_program->SetUniform("material.ambient", sglm::vec3(1.0f, 1.0f, 1.0f));
+    // m_program->SetUniform("material.diffuse", sglm::vec3(1.0f, 1.0f, 1.0f));
+    // m_program->SetUniform("material.specular", sglm::vec3(1.0f, 1.0f, 1.0f));
+    // m_program->SetUniform("material.shininess", 100.0f);
+    // m_program->SetUniform("transform", projection * view * lightModelTransform);
+    // m_program->SetUniform("modelTransform", lightModelTransform);
+    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
     m_program->SetUniform("viewPos", m_cameraPos);
-    m_program->SetUniform("lightPos", m_lightPos);
-    m_program->SetUniform("lightColor", m_lightColor);
-    m_program->SetUniform("objectColor", m_objectColor);
-    m_program->SetUniform("ambientStrength", m_ambientStrength);
-    m_program->SetUniform("specularStrength", m_specularStrength);
-    m_program->SetUniform("specularShininess", m_specularShininess);
+    m_program->SetUniform("light.position", m_light.position);
+    m_program->SetUniform("light.ambient", m_light.ambient);
+    m_program->SetUniform("light.diffuse", m_light.diffuse);
+    m_program->SetUniform("light.specular", m_light.specular);
+    m_program->SetUniform("material.ambient", m_material.ambient);
+    m_program->SetUniform("material.diffuse", m_material.diffuse);
+    m_program->SetUniform("material.specular", m_material.specular);
+    m_program->SetUniform("material.shininess", m_material.shininess);
 
     for (size_t i = 0; i < cubePositions.size(); i++) {
         auto& pos = cubePositions[i];   

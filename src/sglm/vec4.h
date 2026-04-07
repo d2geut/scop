@@ -33,6 +33,36 @@ namespace sglm {
             return data[i];
         }
 
+        // += 연산자 오버로딩
+        vec4& operator+=(const vec4& v) {
+            this->x += v.x;
+            this->y += v.y;
+            this->z += v.z;
+            this->w += v.w;
+
+            return *this;
+        }
+        vec4& operator-=(const vec4& v) {
+            this->x -= v.x;
+            this->y -= v.y;
+            this->z -= v.z;
+            this->w -= v.w;
+
+            return *this;
+        }
+        vec4& operator*=(const vec4& v) {
+            this->x *= v.x;
+            this->y *= v.y;
+            this->z *= v.z;
+            this->w *= v.w;
+
+            return *this;
+        }
+        // 단항 마이너스 연산자 오버로딩
+        vec4 operator-() const {
+            return vec4(-x, -y, -z, -w);
+        }
+
         // 데이터 포인터 넘기기
         const float* value_ptr() const {
             return &data[0];

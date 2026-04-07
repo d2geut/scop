@@ -30,6 +30,30 @@ namespace sglm {
             return data[i];
         }
 
+        // += 연산자 오버로딩
+        vec2& operator+=(const vec2& v) {
+            this->x += v.x;
+            this->y += v.y;
+
+            return *this;
+        }
+        vec2& operator-=(const vec2& v) {
+            this->x -= v.x;
+            this->y -= v.y;
+
+            return *this;
+        }
+        vec2& operator*=(const vec2& v) {
+            this->x *= v.x;
+            this->y *= v.y;
+
+            return *this;
+        }
+        // 단항 마이너스 연산자 오버로딩
+        vec2 operator-() const {
+            return vec2(-x, -y);
+        }
+
         // 데이터 포인터 넘기기
         const float* value_ptr() const {
             return &data[0];

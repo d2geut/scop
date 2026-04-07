@@ -10,6 +10,7 @@
 #include "texture.h"
 #include "./sglm/sglm.h"
 #include "constants.h"
+#include "mesh.h"
 
 CLASS_PTR(Context)
 class Context {
@@ -26,11 +27,7 @@ private:
     ProgramUPtr m_program;
     ProgramUPtr m_simpleProgram;
 
-    VertexLayoutUPtr m_vertexLayout;
-    BufferUPtr m_vertexBuffer;
-    BufferUPtr m_indexBuffer;
-    TextureUPtr m_texture;
-    TextureUPtr m_texture2;
+    MeshUPtr m_box;
 
     // window size
     int m_width { Constants::WindowWidth };

@@ -70,7 +70,7 @@ void main() {
     vec3 result = vec3(0.0);
 
     // directional light result
-    result += calcDirectionalLight() * 0.02;
+    result += calcDirectionalLight() * 0.02; // 가중값 결정해야함
     // all point light result
     result += calcPointLight() * 0.98;
 

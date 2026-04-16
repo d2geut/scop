@@ -70,9 +70,13 @@ void main() {
     vec3 result = vec3(0.0);
 
     // directional light result
-    result += calcDirectionalLight() * 0.02; // 가중값 결정해야함
+    result += calcDirectionalLight() * 0.02;
     // all point light result
-    result += calcPointLight() * 0.98;
+    result += calcPointLight() * 5.0;
 
-    fragColor = vec4(pow(result, vec3(1.0 / 2.2)), 1.0);
+    // tone mapping
+    vec3 mapped = result / (result + vec3(1.0));
+
+    // 감마 보정
+    fragColor = vec4(pow(mapped, vec3(1.0 / 2.2)), 1.0);
 }

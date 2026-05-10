@@ -40,7 +40,7 @@ void Image::SetCheckImage(int gridX, int gridY) {
 
 bool Image::LoadBMP(const std::string& filepath) {
     // bmp file name format check
-    if (!isBMPFile(filepath)) {
+    if (!checkFileFormat(filepath, ".bmp")) {
         std::cerr << "failed to open BMP file: " << filepath << " is not BMP file" << std::endl;
         return false;
     }

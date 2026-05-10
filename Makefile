@@ -14,7 +14,8 @@ SRCSNAME = main.cpp \
 	image.cpp \
 	texture.cpp \
 	input.cpp \
-	mesh.cpp
+	mesh.cpp \
+	model.cpp
 SRCS = $(addprefix $(SRCSDIR)/, $(SRCSNAME))
 OBJS = $(SRCS:.cpp=.o)
 

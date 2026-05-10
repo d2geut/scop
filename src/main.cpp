@@ -7,6 +7,7 @@
 #include "context.h"
 #include "constants.h"
 #include "input.h"
+#include "model.h"
 
 Input& g_input = Input::instance();
 
@@ -74,6 +75,9 @@ int main()
     glfwSetKeyCallback(window, Input::OnKeyEvent);
     glfwSetCursorPosCallback(window, OnCursorPos);
     glfwSetMouseButtonCallback(window, OnMouseButton);
+
+    // model.cpp test code
+    ModelUPtr m_model = Model::Load("model/test.obj");
 
     // glfw loop
     std::cout << "Start main loop" << std::endl;

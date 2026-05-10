@@ -29,6 +29,7 @@ void Mesh::Draw() const {
 }
 
 MeshUPtr Mesh::CreateBox() {
+    // vertex, normal, texCoord
     std::vector<Vertex> vertices = {
         Vertex { sglm::vec3(-0.5f, -0.5f, -0.5f), sglm::vec3( 0.0f,  0.0f, -1.0f), sglm::vec2(0.0f, 0.0f) },
         Vertex { sglm::vec3( 0.5f, -0.5f, -0.5f), sglm::vec3( 0.0f,  0.0f, -1.0f), sglm::vec2(1.0f, 0.0f) },

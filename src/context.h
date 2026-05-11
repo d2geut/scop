@@ -25,6 +25,7 @@ private:
     Context() {}
     bool Init();
     ProgramUPtr m_program;
+    ProgramUPtr m_program2;
     ProgramUPtr m_simpleProgram;
 
     MeshUPtr m_box;
@@ -33,8 +34,8 @@ private:
     int m_width { Constants::WindowWidth };
     int m_height { Constants::WindowHeight };
 
-    // animation - space로 제어
-    bool m_animation { true };
+    // texture - space로 제어
+    bool m_texmode { false };
 
     // clear color
     sglm::vec4 m_clearColor { sglm::vec4(0.1f, 0.2f, 0.3f, 0.0f) };
@@ -44,16 +45,19 @@ private:
         sglm::vec3 position { sglm::vec3(2.0f, 2.0f, 2.0f) };
         sglm::vec3 direction { sglm::vec3(-1.0f, -1.0f, -1.0f) };
         float distance { 50.0f };
-        sglm::vec3 ambient { sglm::vec3(0.1f, 0.1f, 0.1f) };
-        sglm::vec3 diffuse { sglm::vec3(0.8f, 0.8f, 0.8f) };
+        sglm::vec3 ambient { sglm::vec3(0.2f, 0.2f, 0.2f) };
+        sglm::vec3 diffuse { sglm::vec3(0.5f, 0.5f, 0.5f) };
         sglm::vec3 specular { sglm::vec3(1.0f, 1.0f, 1.0f) };
     };
     Light m_light;
 
     // material parameter
     struct Material {
-        TextureUPtr diffuse;
-        TextureUPtr specular;
+        TextureUPtr texdiffuse;
+        TextureUPtr texspecular;
+        sglm::vec3 ambient { sglm::vec3(1.0f, 0.5f, 0.31f) };
+        sglm::vec3 diffuse { sglm::vec3(1.0f, 0.5f, 0.31f) };
+        sglm::vec3 specular { sglm::vec3(0.5f, 0.5f, 0.5f) };
         float shininess { 32.0f };
     };
     Material m_material;

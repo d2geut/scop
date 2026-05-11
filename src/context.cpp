@@ -38,7 +38,7 @@ void Context::ProcessInput(GLFWwindow* window, float deltaTime) {
 
     // space
     if (Input::IsKeyDown(GLFW_KEY_SPACE))
-        m_animation ? (m_animation = false) : (m_animation = true);
+        m_texmode ? (m_texmode = false) : (m_texmode = true);
 }
 
 void Context::MouseMove(double x, double y) {
@@ -77,19 +77,6 @@ void Context::MouseButton(int button, int action, double x, double y) {
 }
 
 void Context::Render() {
-    std::vector<sglm::vec3> cubePositions = {
-        sglm::vec3(0.0f, 0.0f, 0.0f),
-        sglm::vec3(2.0f, 5.0f, -15.0f),
-        sglm::vec3(-1.5f, -2.2f, -2.5f),
-        sglm::vec3(-3.8f, -2.0f, -12.3f),
-        sglm::vec3(2.4f, -0.4f, -3.5f),
-        sglm::vec3(-1.7f, 3.0f, -7.5f),
-        sglm::vec3(1.3f, -2.0f, -2.5f),
-        sglm::vec3(1.5f, 2.0f, -2.5f),
-        sglm::vec3(1.5f, 0.2f, -1.5f),
-        sglm::vec3(-1.3f, 1.0f, -1.5f),
-    };
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
@@ -105,28 +92,48 @@ void Context::Render() {
     m_simpleProgram->SetUniform("transform", projection * view * lightModelTransform);
     m_box->Draw();
 
-    m_program->Use();
-    m_program->SetUniform("viewPos", m_cameraPos);
-    m_program->SetUniform("light.position", m_light.position);
-    m_program->SetUniform("light.direction", m_light.direction);
-    m_program->SetUniform("light.range", m_light.distance);
-    m_program->SetUniform("light.ambient", m_light.ambient);
-    m_program->SetUniform("light.diffuse", m_light.diffuse);
-    m_program->SetUniform("light.specular", m_light.specular);
-    m_program->SetUniform("material.diffuse", 0);
-    m_program->SetUniform("material.specular", 1);
-    m_program->SetUniform("material.shininess", m_material.shininess);
+    // texmode on
+    if (m_texmode) {
+        m_program->Use();
+        m_program->SetUniform("viewPos", m_cameraPos);
+        m_program->SetUniform("light.position", m_light.position);
+        m_program->SetUniform("light.direction", m_light.direction);
+        m_program->SetUniform("light.range", m_light.distance);
+        m_program->SetUniform("light.ambient", m_light.ambient);
+        m_program->SetUniform("light.diffuse", m_light.diffuse);
+        m_program->SetUniform("light.specular", m_light.specular);
+        m_program->SetUniform("material.diffuse", 0);
+        m_program->SetUniform("material.specular", 1);
+        m_program->SetUniform("material.shininess", m_material.shininess);
 
-    glActiveTexture(GL_TEXTURE0);
-    m_material.diffuse->Bind();
-    glActiveTexture(GL_TEXTURE1);
-    m_material.specular->Bind();
+        glActiveTexture(GL_TEXTURE0);
+        m_material.texdiffuse->Bind();
+        glActiveTexture(GL_TEXTURE1);
+        m_material.texspecular->Bind();
 
-    for (size_t i = 0; i < cubePositions.size(); i++) {
-        auto& pos = cubePositions[i];   
+        auto pos = sglm::vec3();
         auto model = sglm::translate(sglm::mat4(1.0f), pos);
-        auto angle = sglm::radians((float)glfwGetTime() * 120.0f + 20.0f * (float)i);
-        model = sglm::rotate(model, m_animation ? angle : 0.0f, sglm::vec3(1.0f, 0.5f, 0.0f));
+        auto transform = projection * view * model;
+        m_program->SetUniform("transform", transform);
+        m_program->SetUniform("modelTransform", model);
+        m_box->Draw();
+    }
+    else {
+        m_program2->Use();
+        m_program2->SetUniform("viewPos", m_cameraPos);
+        m_program2->SetUniform("light.position", m_light.position);
+        m_program2->SetUniform("light.direction", m_light.direction);
+        m_program2->SetUniform("light.range", m_light.distance);
+        m_program2->SetUniform("light.ambient", m_light.ambient);
+        m_program2->SetUniform("light.diffuse", m_light.diffuse);
+        m_program2->SetUniform("light.specular", m_light.specular);
+        m_program2->SetUniform("material.ambient", m_material.ambient);
+        m_program2->SetUniform("material.diffuse", m_material.diffuse);
+        m_program2->SetUniform("material.specular", m_material.specular);
+        m_program2->SetUniform("material.shininess", m_material.shininess);
+
+        auto pos = sglm::vec3();
+        auto model = sglm::translate(sglm::mat4(1.0f), pos);
         auto transform = projection * view * model;
         m_program->SetUniform("transform", transform);
         m_program->SetUniform("modelTransform", model);
@@ -145,10 +152,14 @@ bool Context::Init() {
     if (!m_program)
         return false;
 
+    m_program2 = Program::Create("./shader/color_mode.vs", "./shader/color_mode.fs");
+    if (!m_program2)
+        return false;
+
     glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 
-    m_material.diffuse = Texture::CreateFromImage(Image::Load("./image/container2.bmp").get());
-    m_material.specular = Texture::CreateFromImage(Image::Load("./image/container2_specular.bmp").get());
+    m_material.texdiffuse = Texture::CreateFromImage(Image::Load("./image/container2.bmp").get());
+    m_material.texspecular = Texture::CreateFromImage(Image::Load("./image/container2_specular.bmp").get());
 
     return true;
 }

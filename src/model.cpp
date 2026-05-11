@@ -168,6 +168,7 @@ bool Model::LoadOBJFile(const std::string& filename) {
         }
     }
 
+    // test code
     std::cout << "[vertices]" << std::endl;
     for (std::vector<Vertex>::iterator iter1 = vertices.begin(); iter1 != vertices.end(); iter1++) {
         sglm::vec3 position = iter1->position;

@@ -2,9 +2,9 @@
 #include <iostream>
 #include "input.h"
 
-ContextUPtr Context::Create() {
+ContextUPtr Context::Create(const std::string& filename) {
     auto context = ContextUPtr(new Context());
-    if (!context->Init())
+    if (!context->Init(filename))
         return nullptr;
     return std::move(context);
 }
@@ -116,7 +116,7 @@ void Context::Render() {
         auto transform = projection * view * model;
         m_program->SetUniform("transform", transform);
         m_program->SetUniform("modelTransform", model);
-        m_box->Draw();
+        m_model->Draw();
     }
     else {
         m_program2->Use();
@@ -137,11 +137,14 @@ void Context::Render() {
         auto transform = projection * view * model;
         m_program->SetUniform("transform", transform);
         m_program->SetUniform("modelTransform", model);
-        m_box->Draw();
+        m_model->Draw();
     }
 }
 
-bool Context::Init() {
+bool Context::Init(const std::string& filename) {
+    m_model = Model::Load(filename);
+    if (!m_model)
+        return false;
     m_box = Mesh::CreateBox();
 
     m_simpleProgram = Program::Create("./shader/simple.vs", "./shader/simple.fs");

@@ -10,6 +10,10 @@ ModelUPtr Model::Load(const std::string& filename) {
     return std::move(model);
 }
 
+void Model::Draw() const {
+    m_mesh->Draw();
+}
+
 void Model::ProcessVertexLine(std::stringstream& ss, const std::string& filename, size_t lineCount) {
     sglm::vec3 temp;
     if (!(ss >> temp.x >> temp.y >> temp.z)) {
@@ -70,9 +74,9 @@ void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, 
                 catch(const std::exception& e) {
                     std::cerr << filename << ": invalid face data [line: " << lineCount << "]" << std::endl;
                     return;
-                }            
+                }
+                i++;
             }
-            i++;
         }
 
         // hash에 넣고 key값을 통해서 index return
@@ -184,7 +188,7 @@ bool Model::LoadOBJFile(const std::string& filename) {
     }
     std::cout << std::endl;
 
-    m_mesh->Create(vertices, indices, GL_TRIANGLES);
+    m_mesh = Mesh::Create(vertices, indices, GL_TRIANGLES);
 
     return true;
 }

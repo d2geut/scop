@@ -11,11 +11,12 @@
 #include "./sglm/sglm.h"
 #include "constants.h"
 #include "mesh.h"
+#include "model.h"
 
 CLASS_PTR(Context)
 class Context {
 public:
-    static ContextUPtr Create();
+    static ContextUPtr Create(const std::string& filename);
     void Render();
     void ProcessInput(GLFWwindow* window, float deltaTime);
     void Reshape(int width, int height);
@@ -23,11 +24,12 @@ public:
     void MouseButton(int button, int action, double x, double y);
 private:
     Context() {}
-    bool Init();
+    bool Init(const std::string& filename);
     ProgramUPtr m_program;
     ProgramUPtr m_program2;
     ProgramUPtr m_simpleProgram;
 
+    ModelUPtr m_model;
     MeshUPtr m_box;
 
     // window size
@@ -38,7 +40,7 @@ private:
     bool m_texmode { false };
 
     // clear color
-    sglm::vec4 m_clearColor { sglm::vec4(0.15f, 0.15f, 0.15f, 0.0f) };
+    sglm::vec4 m_clearColor { sglm::vec4(0.12f, 0.12f, 0.12f, 0.0f) };
 
     // light parameter
     struct Light {

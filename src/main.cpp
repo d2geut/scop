@@ -30,9 +30,14 @@ void OnMouseButton(GLFWwindow* window, int button, int action, int modifier) {
     context->MouseButton(button, action, x, y);
 }
 
-int main()
+int main(int argc, char **argv)
 {
     std::cout << "Program Start!" << std::endl;
+
+    if (argc != 2) {
+        std::cerr << "format: ./scop filename.obj" << std::endl;
+        return 0;
+    }
 
     // glfw 라이브러리 초기화
     std::cout << "Initialize glfw" << std::endl;
@@ -62,7 +67,7 @@ int main()
     const GLubyte* glVersion = glGetString(GL_VERSION);
     std::cout << "OpenGL context version: " << glVersion << std::endl;
 
-    auto context = Context::Create();
+    auto context = Context::Create(argv[1]);
     if (!context) {
         std::cerr << "failed to create context" << std::endl;
         glfwTerminate();
@@ -77,7 +82,7 @@ int main()
     glfwSetMouseButtonCallback(window, OnMouseButton);
 
     // model.cpp test code
-    ModelUPtr m_model = Model::Load("model/test.obj");
+    // ModelUPtr m_model = Model::Load("model/test.obj");
 
     // glfw loop
     std::cout << "Start main loop" << std::endl;

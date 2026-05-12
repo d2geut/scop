@@ -61,8 +61,12 @@ vec3 calcPointLight() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     vec3 specular = spec * specColor * light.specular;
 
-    vec3 result = (ambient + diffuse + specular) * attenuation;
+    vec3 result = ambient + (diffuse + specular) * attenuation;
     return result;
+}
+
+float random(vec2 uv) {
+    return fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
 }
 
 void main() {
@@ -73,6 +77,10 @@ void main() {
     result += calcDirectionalLight() * 0.02;
     // all point light result
     result += calcPointLight() * 5.0;
+
+    // dithering
+    float noise = (random(gl_FragCoord.xy) - 0.5) / 255.0;
+    result += noise;
 
     // tone mapping
     vec3 mapped = result / (result + vec3(1.0));

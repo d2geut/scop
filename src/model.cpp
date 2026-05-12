@@ -196,20 +196,20 @@ bool Model::LoadOBJFile(const std::string& filename) {
     }
 
     // test code
-    std::cout << "[vertices]" << std::endl;
-    for (std::vector<Vertex>::iterator iter1 = vertices.begin(); iter1 != vertices.end(); iter1++) {
-        sglm::vec3 position = iter1->position;
-        sglm::vec2 texCoord = iter1->texCoord;
-        sglm::vec3 normal = iter1->normal;
-        std::cout << "(" << position.x << "," << position.y << "," << position.z << "), (" <<
-            texCoord.x << "," << texCoord.y << "), (" <<
-            normal.x << "," << normal.y << "," << normal.z << ")" << std::endl;
-    }
-    std::cout << "[indices]" << std::endl;
-    for (std::vector<uint32_t>::iterator iter2 = indices.begin(); iter2 != indices.end(); iter2++) {
-        std::cout << *iter2 << " ";
-    }
-    std::cout << std::endl;
+    // std::cout << "[vertices]" << std::endl;
+    // for (std::vector<Vertex>::iterator iter1 = vertices.begin(); iter1 != vertices.end(); iter1++) {
+    //     sglm::vec3 position = iter1->position;
+    //     sglm::vec2 texCoord = iter1->texCoord;
+    //     sglm::vec3 normal = iter1->normal;
+    //     std::cout << "(" << position.x << "," << position.y << "," << position.z << "), (" <<
+    //         texCoord.x << "," << texCoord.y << "), (" <<
+    //         normal.x << "," << normal.y << "," << normal.z << ")" << std::endl;
+    // }
+    // std::cout << "[indices]" << std::endl;
+    // for (std::vector<uint32_t>::iterator iter2 = indices.begin(); iter2 != indices.end(); iter2++) {
+    //     std::cout << *iter2 << " ";
+    // }
+    // std::cout << std::endl;
 
     m_mesh = Mesh::Create(vertices, indices, GL_TRIANGLES);
 

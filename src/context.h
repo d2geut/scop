@@ -47,7 +47,7 @@ private:
         sglm::vec3 position { sglm::vec3(3.0f, 3.0f, 3.0f) };
         sglm::vec3 direction { sglm::vec3(-1.0f, -1.0f, -1.0f) };
         float distance { 100.0f };
-        sglm::vec3 ambient { sglm::vec3(0.1f, 0.1f, 0.1f) };
+        sglm::vec3 ambient { sglm::vec3(0.01f, 0.01f, 0.01f) };
         sglm::vec3 diffuse { sglm::vec3(0.5f, 0.5f, 0.5f) };
         sglm::vec3 specular { sglm::vec3(1.0f, 1.0f, 1.0f) };
     };

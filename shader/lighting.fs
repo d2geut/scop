@@ -70,7 +70,7 @@ void main() {
     vec3 result = vec3(0.0);
 
     // directional light result
-    result += calcDirectionalLight() * 0.01;
+    result += calcDirectionalLight() * 0.02;
     // all point light result
     result += calcPointLight() * 5.0;
 

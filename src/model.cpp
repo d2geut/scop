@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 
 ModelUPtr Model::Load(const std::string& filename) {
     auto model = ModelUPtr(new Model());
@@ -14,112 +15,132 @@ void Model::Draw() const {
     m_mesh->Draw();
 }
 
-void Model::ProcessVertexLine(std::stringstream& ss, const std::string& filename, size_t lineCount) {
+void Model::ProcessVertexLine(std::stringstream& ss, const std::string& filename, size_t lineCount, LoadInfo& linfo) {
     sglm::vec3 temp;
     if (!(ss >> temp.x >> temp.y >> temp.z)) {
         std::cerr << filename << ": invalid vertex data [line: " << lineCount << "]" << std::endl;
         return;
     }
-    vertexInfo.push_back(temp);
+    linfo.vertexInfo.push_back(temp);
 }
 
-void Model::ProcessTextureLine(std::stringstream& ss, const std::string& filename, size_t lineCount) {
+void Model::ProcessTextureLine(std::stringstream& ss, const std::string& filename, size_t lineCount, LoadInfo& linfo) {
     sglm::vec2 temp;
     if (!(ss >> temp.x >> temp.y)) {
         std::cerr << filename << ": invalid texcoord data [line: " << lineCount << "]" << std::endl;
         return;
     }
-    texCoordInfo.push_back(temp);
+    linfo.texCoordInfo.push_back(temp);
 }
 
-void Model::ProcessNormalLine(std::stringstream& ss, const std::string& filename, size_t lineCount) {
+void Model::ProcessNormalLine(std::stringstream& ss, const std::string& filename, size_t lineCount, LoadInfo& linfo) {
     sglm::vec3 temp;
     if (!(ss >> temp.x >> temp.y >> temp.z)) {
         std::cerr << filename << ": invalid normal data [line: " << lineCount << "]" << std::endl;
         return;
     }
-    normalInfo.push_back(temp);
+    linfo.normalInfo.push_back(temp);
 }
 
-void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, size_t lineCount) {
+void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, size_t lineCount, LoadInfo& linfo) {
     std::vector<std::string> faceInfo;
-    std::string info;
     // 분리안된 face indices를 담는 vector
     std::vector<uint32_t> findices;
+    std::vector<VertexIndex> vidx;
 
+    std::string info;
     while (ss >> info) {
         faceInfo.push_back(info);
     }
-    if (faceInfo.size() < 3) {
+
+    size_t fsize = faceInfo.size();
+    bool normalflag = false;
+    if (fsize < 3) {
         std::cerr << filename << ": invalid face data [line: " << lineCount << "]" << std::endl;
         return;
     }
-
-    std::vector<std::string>::iterator iter;
-    for (std::vector<std::string>::iterator iter = faceInfo.begin(); iter != faceInfo.end(); iter++) {
-        std::stringstream sss(*iter);
+    for (int i = 0; i < fsize; i++) {
+        std::stringstream ss1(faceInfo[i]);
         std::string idx;
-        int vIdx, vtIdx, vnIdx;
-        vIdx = vtIdx = vnIdx = 0;
-        int i = 0;
-        while (std::getline(sss, idx, '/')) {
+        vidx.push_back({0, 0, 0});
+
+        int j = 0;
+        while (std::getline(ss1, idx, '/')) {
             if (!idx.empty()) {
                 try {
                     int index = std::stoi(idx);
-                    if (i == 0) vIdx = index;
-                    else if (i == 1) vtIdx = index;
-                    else if (i == 2) vnIdx = index;
+                    if (j == 0) {
+                        vidx[i].v = index;
+                        if (index > linfo.vertexInfo.size() || index <= 0)
+                            throw std::out_of_range("out of vertex info range");
+                    }
+                    else if (j == 1) {
+                        vidx[i].vt = index;
+                        if (index > linfo.texCoordInfo.size() || index < 0)
+                            throw std::out_of_range("out of texcoord info range");
+                    }
+                    else if (j == 2) {
+                        vidx[i].vn = index;
+                        if (index > linfo.normalInfo.size() || index < 0)
+                            throw std::out_of_range("out of normal info range");
+                    }
                     else break ;
                 }
                 catch(const std::exception& e) {
                     std::cerr << filename << ": invalid face data [line: " << lineCount << "]" << std::endl;
                     return;
                 }
-                i++;
             }
+            j++;
         }
+        if (!vidx[i].vn)
+            normalflag = true;
+    }
+    // normal이 0인 vertex가 존재
+    if (normalflag) {
+        sglm::vec3 gnormal = sglm::cross(linfo.vertexInfo[vidx[1].v - 1] - linfo.vertexInfo[vidx[0].v - 1], 
+            linfo.vertexInfo[vidx[2].v - 1] - linfo.vertexInfo[vidx[0].v - 1]);
+        linfo.generateNormalInfo.push_back(gnormal);
+        int vnidx = linfo.normalInfo.size() + linfo.generateNormalInfo.size();
+        for (int i = 0; i < fsize; i++) {
+            vidx[i].vn = vnidx;
+        }
+    }
 
-        // hash에 넣고 key값을 통해서 index return
-        VertexIndex key = {vIdx, vtIdx, vnIdx};
-        auto it = fmap.find(key);
-        if (it != fmap.end()) {
+    // hash에 넣고 key값을 통해서 index return
+    for (int i = 0; i < fsize; i++) {
+        VertexIndex key = {vidx[i].v, vidx[i].vt, vidx[i].vn};
+        auto it = linfo.fmap.find(key);
+        if (it != linfo.fmap.end()) {
             findices.push_back(it->second);
         }
         else {
             Vertex vertice;
 
             // vertex 범위 검사
-            if (vIdx > vertexInfo.size() || vIdx <= 0) {
+            if (vidx[i].v > linfo.vertexInfo.size() || vidx[i].v <= 0) {
                 std::cerr << filename << ": invalid face data [line: " << lineCount << "]" << std::endl;
                 return;
             }
-            vertice.position = vertexInfo[vIdx - 1];
+            vertice.position = linfo.vertexInfo[vidx[i].v - 1];
 
             // texCoord 범위 검사
-            if (vtIdx > texCoordInfo.size()) {
-                std::cerr << filename << ": invalid face data [line: " << lineCount << "]" << std::endl;
-                return;
-            }
-            else if (vtIdx > 0) // vt가 있는 경우
-                vertice.texCoord = texCoordInfo[vtIdx - 1];
+            if (vidx[i].vt > 0) // vt가 있는 경우
+                vertice.texCoord = linfo.texCoordInfo[vidx[i].vt - 1];
             else // vt가 없는 경우
                 vertice.texCoord = sglm::vec2(0.0f, 0.0f);
             
             // normal 범위 검사
-            if (vnIdx > normalInfo.size()) {
-                std::cerr << filename << ": invalid face data [line: " << lineCount << "]" << std::endl;
-                return;
-            }
-            else if (vnIdx > 0) // vn이 있는 경우
-                vertice.normal = normalInfo[vnIdx - 1];
-            else // vn이 없는 경우 임시 처리
-                vertice.normal = sglm::vec3(0.0f, 0.0f, 0.0f);
+            if (vidx[i].vn > linfo.normalInfo.size()) // vn이 generatenormal인 경우
+                vertice.normal = linfo.generateNormalInfo[vidx[i].vn - linfo.normalInfo.size() - 1];
+            else
+                vertice.normal = linfo.normalInfo[vidx[i].vn - 1];
 
             uint32_t fIdx = (uint32_t)vertices.size();
             vertices.push_back(vertice);
             findices.push_back(fIdx);
 
-            fmap[key] = fIdx;
+            linfo.fmap[key] = fIdx;
         }
     }
     // 면을 삼각형으로 분리
@@ -132,6 +153,8 @@ void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, 
 }
 
 bool Model::LoadOBJFile(const std::string& filename) {
+    LoadInfo linfo;
+
     // file format test
     if (!checkFileFormat(filename, ".obj")) {
         std::cerr << "failed to open OBJ file: " << filename << " is not OBJ file" << std::endl;
@@ -153,16 +176,16 @@ bool Model::LoadOBJFile(const std::string& filename) {
         lineCount++;
 
         if (prefix == "v") {
-            ProcessVertexLine(ss, filename, lineCount);
+            ProcessVertexLine(ss, filename, lineCount, linfo);
         }
         else if (prefix == "vt") {
-            ProcessTextureLine(ss, filename, lineCount);
+            ProcessTextureLine(ss, filename, lineCount, linfo);
         }
         else if (prefix == "vn") {
-            ProcessNormalLine(ss, filename, lineCount);
+            ProcessNormalLine(ss, filename, lineCount, linfo);
         }
         else if (prefix == "f") {
-            ProcessFaceLine(ss, filename, lineCount);
+            ProcessFaceLine(ss, filename, lineCount, linfo);
         }
         else if (prefix == "#" || prefix == "")
             continue;

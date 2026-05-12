@@ -78,13 +78,14 @@ void main() {
     // all point light result
     result += calcPointLight() * 5.0;
 
-    // dithering
-    float noise = (random(gl_FragCoord.xy) - 0.5) / 255.0;
-    result += noise;
-
     // tone mapping
     vec3 mapped = result / (result + vec3(1.0));
 
     // 감마 보정
-    fragColor = vec4(pow(mapped, vec3(1.0 / 2.2)), 1.0);
+    vec3 color = pow(mapped, vec3(1.0 / 2.2));
+
+    // dithering
+    float noise = (random(gl_FragCoord.xy) - 0.5) / 255.0;
+    color += noise;
+    fragColor = vec4(color, 1.0);
 }

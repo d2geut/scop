@@ -1,6 +1,7 @@
 #version 330 core
 in vec3 normal;
 in vec3 position;
+in vec3 color;
 out vec4 fragColor;
 
 uniform vec3 viewPos;
@@ -16,20 +17,20 @@ struct Light {
 uniform Light light;
 
 struct Material {
-    vec3 ambient;
-    vec3 diffuse;
+    // vec3 ambient;
+    // vec3 diffuse;
     vec3 specular;
     float shininess;
 };
 uniform Material material;
 
 vec3 calcDirectionalLight() {
-    vec3 ambient = material.ambient * light.ambient;
+    vec3 ambient = color * light.ambient;
 
     vec3 lightDir = normalize(-light.direction);
     vec3 pixelNorm = normalize(normal);
     float diff = max(dot(pixelNorm, lightDir), 0.0);
-    vec3 diffuse =  diff * material.diffuse * light.diffuse;
+    vec3 diffuse =  diff * color * light.diffuse;
 
     vec3 viewDir = normalize(viewPos - position);
     vec3 reflectDir = reflect(-lightDir, pixelNorm);
@@ -40,7 +41,7 @@ vec3 calcDirectionalLight() {
 }
 
 vec3 calcPointLight() {
-    vec3 ambient = material.ambient * light.ambient;
+    vec3 ambient = color * light.ambient;
 
     float dist = length(light.position - position);
     float atten = 1.0 / (dist * dist + 1.0);
@@ -50,7 +51,7 @@ vec3 calcPointLight() {
 
     vec3 pixelNorm = normalize(normal);
     float diff = max(dot(pixelNorm, lightDir), 0.0);
-    vec3 diffuse =  diff * material.diffuse * light.diffuse;
+    vec3 diffuse =  diff * color * light.diffuse;
 
     vec3 viewDir = normalize(viewPos - position);
     vec3 reflectDir = reflect(-lightDir, pixelNorm);

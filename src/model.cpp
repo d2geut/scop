@@ -48,6 +48,13 @@ void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, 
     std::vector<uint32_t> findices;
     std::vector<VertexIndex> vidx;
 
+    sglm::vec3 colorPalette[5] = {
+        sglm::vec3(0.75f, 0.75f, 1.0f), 
+        sglm::vec3(0.65f, 0.65f, 1.0f), 
+        sglm::vec3(0.50f, 0.50f, 1.0f), 
+        sglm::vec3(0.25f, 0.25f, 1.0f), 
+        sglm::vec3(0.10f, 0.10f, 1.0f)};
+
     std::string info;
     while (ss >> info) {
         faceInfo.push_back(info);
@@ -62,7 +69,7 @@ void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, 
     for (int i = 0; i < fsize; i++) {
         std::stringstream ss1(faceInfo[i]);
         std::string idx;
-        vidx.push_back({0, 0, 0});
+        vidx.push_back({0, 0, 0, colorPalette[lineCount % 5]});
 
         int j = 0;
         while (std::getline(ss1, idx, '/')) {
@@ -109,7 +116,7 @@ void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, 
 
     // hash에 넣고 key값을 통해서 index return
     for (int i = 0; i < fsize; i++) {
-        VertexIndex key = {vidx[i].v, vidx[i].vt, vidx[i].vn};
+        VertexIndex key(vidx[i].v, vidx[i].vt, vidx[i].vn, vidx[i].colorRGB);
         auto it = linfo.fmap.find(key);
         if (it != linfo.fmap.end()) {
             findices.push_back(it->second);
@@ -135,6 +142,8 @@ void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, 
                 vertice.normal = linfo.generateNormalInfo[vidx[i].vn - linfo.normalInfo.size() - 1];
             else
                 vertice.normal = linfo.normalInfo[vidx[i].vn - 1];
+
+            vertice.color = colorPalette[lineCount % 5];
 
             uint32_t fIdx = (uint32_t)vertices.size();
             vertices.push_back(vertice);

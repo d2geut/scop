@@ -57,8 +57,8 @@ private:
     struct Material {
         TextureUPtr texdiffuse;
         TextureUPtr texspecular;
-        sglm::vec3 ambient { sglm::vec3(1.0f, 0.5f, 0.31f) };
-        sglm::vec3 diffuse { sglm::vec3(1.0f, 0.5f, 0.31f) };
+        // sglm::vec3 ambient { sglm::vec3(1.0f, 0.5f, 0.31f) };
+        // sglm::vec3 diffuse { sglm::vec3(1.0f, 0.5f, 0.31f) };
         sglm::vec3 specular { sglm::vec3(0.5f, 0.5f, 0.5f) };
         float shininess { 32.0f };
     };

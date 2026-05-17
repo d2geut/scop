@@ -10,6 +10,7 @@ struct Vertex {
     sglm::vec3 position;
     sglm::vec3 normal;
     sglm::vec2 texCoord;
+    sglm::vec3 color;
 };
 
 CLASS_PTR(Mesh);

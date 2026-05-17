@@ -86,11 +86,11 @@ void Context::Render() {
     auto view = sglm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
 
     // light cube
-    auto lightModelTransform = sglm::translate(sglm::mat4(1.0), m_light.position) * sglm::scale(sglm::mat4(1.0), sglm::vec3(0.1f));
-    m_simpleProgram->Use();
-    m_simpleProgram->SetUniform("color", sglm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
-    m_simpleProgram->SetUniform("transform", projection * view * lightModelTransform);
-    m_box->Draw();
+    // auto lightModelTransform = sglm::translate(sglm::mat4(1.0), m_light.position) * sglm::scale(sglm::mat4(1.0), sglm::vec3(0.1f));
+    // m_simpleProgram->Use();
+    // m_simpleProgram->SetUniform("color", sglm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
+    // m_simpleProgram->SetUniform("transform", projection * view * lightModelTransform);
+    // m_box->Draw();
 
     // texmode on
     if (m_texmode) {
@@ -127,8 +127,8 @@ void Context::Render() {
         m_program2->SetUniform("light.ambient", m_light.ambient);
         m_program2->SetUniform("light.diffuse", m_light.diffuse);
         m_program2->SetUniform("light.specular", m_light.specular);
-        m_program2->SetUniform("material.ambient", m_material.ambient);
-        m_program2->SetUniform("material.diffuse", m_material.diffuse);
+        // m_program2->SetUniform("material.ambient", m_material.ambient);
+        // m_program2->SetUniform("material.diffuse", m_material.diffuse);
         m_program2->SetUniform("material.specular", m_material.specular);
         m_program2->SetUniform("material.shininess", m_material.shininess);
 
@@ -145,11 +145,11 @@ bool Context::Init(const std::string& filename) {
     m_model = Model::Load(filename);
     if (!m_model)
         return false;
-    m_box = Mesh::CreateBox();
+    // m_box = Mesh::CreateBox();
 
-    m_simpleProgram = Program::Create("./shader/simple.vs", "./shader/simple.fs");
-    if (!m_simpleProgram)
-        return false;
+    // m_simpleProgram = Program::Create("./shader/simple.vs", "./shader/simple.fs");
+    // if (!m_simpleProgram)
+    //     return false;
 
     m_program = Program::Create("./shader/lighting.vs", "./shader/lighting.fs");
     if (!m_program)

@@ -8,9 +8,20 @@
 
 struct VertexIndex {
     int v, vt, vn;
+    uint32_t colorRGB;
     
+    VertexIndex(int _v, int _vt, int _vn, const sglm::vec3& _color) : v(_v), vt(_vt), vn(_vn) {
+        uint32_t R = static_cast<uint32_t>(_color.r * 255.0f);
+        uint32_t G = static_cast<uint32_t>(_color.g * 255.0f);
+        uint32_t B = static_cast<uint32_t>(_color.b * 255.0f);
+
+        colorRGB = (R << 16) | (G << 8) | B;
+    }
+
+    VertexIndex(int _v, int _vt, int _vn, uint32_t _colorRGB) : v(_v), vt(_vt), vn(_vn), colorRGB(_colorRGB) {}
+
     bool operator==(const VertexIndex& other) const {
-        if (v == other.v && vt == other.vt && vn == other.vn)
+        if (v == other.v && vt == other.vt && vn == other.vn && colorRGB == other.colorRGB)
             return true;
         return false;
     }
@@ -21,7 +32,8 @@ struct VertexHash {
         size_t h1 = std::hash<int>{}(k.v);
         size_t h2 = std::hash<int>{}(k.vt);
         size_t h3 = std::hash<int>{}(k.vn);
-        return h1 ^ (h2 << 1) ^ (h3 << 2);
+        size_t h4 = std::hash<uint32_t>{}(k.colorRGB);
+        return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3);
     }
 };
 

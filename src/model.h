@@ -40,6 +40,7 @@ struct VertexHash {
 struct LoadInfo {
     std::vector<sglm::vec3> vertexInfo;
     std::vector<sglm::vec2> texCoordInfo;
+    std::vector<sglm::vec2> generateTexCoordInfo;
     std::vector<sglm::vec3> normalInfo;
     std::vector<sglm::vec3> generateNormalInfo;
     std::unordered_map<VertexIndex, uint32_t, VertexHash> fmap;
@@ -59,6 +60,8 @@ private:
     void ProcessTextureLine(std::stringstream& ss, const std::string& filename, size_t lineCount, LoadInfo& linfo);
     void ProcessNormalLine(std::stringstream& ss, const std::string& filename, size_t lineCount, LoadInfo& linfo);
     void ProcessFaceLine(std::stringstream& ss, const std::string& filename, size_t lineCount, LoadInfo& linfo);
+
+    sglm::vec2 generateUV(const sglm::vec3& position, const sglm::vec3& normal);
 
     // VBO, EBO data
     std::vector<Vertex> vertices;

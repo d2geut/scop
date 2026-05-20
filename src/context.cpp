@@ -161,8 +161,13 @@ bool Context::Init(const std::string& filename) {
 
     glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 
-    m_material.texdiffuse = Texture::CreateFromImage(Image::Load("./image/container2.bmp").get());
-    m_material.texspecular = Texture::CreateFromImage(Image::Load("./image/container2_specular.bmp").get());
+    auto diffImage = Image::Load("./image/container2.bmp");
+    auto specImage = Image::Load("./image/container2_specular.bmp");
+    if (!diffImage || !specImage)
+        return false;
+
+    m_material.texdiffuse = Texture::CreateFromImage(diffImage.get());
+    m_material.texspecular = Texture::CreateFromImage(specImage.get());
 
     return true;
 }

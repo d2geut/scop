@@ -32,7 +32,7 @@ void Texture::CreateTexture() {
     // bind and set default filter and wrap option
     Bind();
     SetFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-    SetWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+    SetWrap(GL_REPEAT, GL_REPEAT);
 }
 
 void Texture::SetTextureFromImage(const Image* image) {

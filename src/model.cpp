@@ -42,6 +42,26 @@ void Model::ProcessNormalLine(std::stringstream& ss, const std::string& filename
     linfo.normalInfo.push_back(temp);
 }
 
+sglm::vec2 Model::generateUV(const sglm::vec3& position, const sglm::vec3& normal) {
+    sglm::vec3 absNormal = sglm::abs(normal);
+    sglm::vec2 uv(0.0f);
+
+    if (absNormal.x >= absNormal.y && absNormal.x >= absNormal.z) {
+        uv.x = position.z;
+        uv.y = position.y;
+    }
+    else if (absNormal.y >= absNormal.x && absNormal.y >= absNormal.z) {
+        uv.x = position.x;
+        uv.y = position.z;
+    }
+    else {
+        uv.x = position.x;
+        uv.y = position.y;
+    }
+
+    return uv;
+}
+
 void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, size_t lineCount, LoadInfo& linfo) {
     std::vector<std::string> faceInfo;
     // 분리안된 face indices를 담는 vector
@@ -103,14 +123,29 @@ void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, 
         if (!vidx[i].vn)
             normalflag = true;
     }
-    // normal이 0인 vertex가 존재
+
+    // vt, vn이 주어지지 않은 경우
+    int vnidx;
     if (normalflag) {
         sglm::vec3 gnormal = sglm::cross(linfo.vertexInfo[vidx[1].v - 1] - linfo.vertexInfo[vidx[0].v - 1], 
             linfo.vertexInfo[vidx[2].v - 1] - linfo.vertexInfo[vidx[0].v - 1]);
         linfo.generateNormalInfo.push_back(gnormal);
-        int vnidx = linfo.normalInfo.size() + linfo.generateNormalInfo.size();
-        for (int i = 0; i < fsize; i++) {
+        vnidx = linfo.normalInfo.size() + linfo.generateNormalInfo.size();
+    }
+    for (int i = 0; i < fsize; i++) {
+        if (normalflag) {
             vidx[i].vn = vnidx;
+        }
+        if (!vidx[i].vt) {
+            sglm::vec3 tnormal;
+            if (vidx[i].vn > linfo.normalInfo.size()) // vn이 generatenormal인 경우
+                tnormal = linfo.generateNormalInfo[vidx[i].vn - linfo.normalInfo.size() - 1];
+            else
+                tnormal = linfo.normalInfo[vidx[i].vn - 1];
+            sglm::vec2 gUV = generateUV(linfo.vertexInfo[vidx[i].v - 1], tnormal);
+            linfo.generateTexCoordInfo.push_back(gUV);
+            int vtidx = linfo.texCoordInfo.size() + linfo.generateTexCoordInfo.size();
+            vidx[i].vt = vtidx;
         }
     }
 
@@ -124,18 +159,13 @@ void Model::ProcessFaceLine(std::stringstream& ss, const std::string& filename, 
         else {
             Vertex vertice;
 
-            // vertex 범위 검사
-            if (vidx[i].v > linfo.vertexInfo.size() || vidx[i].v <= 0) {
-                std::cerr << filename << ": invalid face data [line: " << lineCount << "]" << std::endl;
-                return;
-            }
             vertice.position = linfo.vertexInfo[vidx[i].v - 1];
 
             // texCoord 범위 검사
-            if (vidx[i].vt > 0) // vt가 있는 경우
+            if (vidx[i].vt > linfo.texCoordInfo.size()) // vt가 generatetexcoord인 경우
+                vertice.texCoord = linfo.generateTexCoordInfo[vidx[i].vt - linfo.texCoordInfo.size() - 1];
+            else
                 vertice.texCoord = linfo.texCoordInfo[vidx[i].vt - 1];
-            else // vt가 없는 경우
-                vertice.texCoord = sglm::vec2(0.0f, 0.0f);
             
             // normal 범위 검사
             if (vidx[i].vn > linfo.normalInfo.size()) // vn이 generatenormal인 경우

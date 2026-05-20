@@ -94,6 +94,10 @@ namespace sglm {
 
         return vec3(v.x / l, v.y / l, v.z / l);
     }
+    // abs
+    inline vec3 abs(const vec3& v) {
+        return vec3(std::abs(v.x), std::abs(v.y), std::abs(v.z));
+    }
 }
 
 #endif

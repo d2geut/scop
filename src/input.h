@@ -22,12 +22,8 @@ private:
 
     struct KeyState {
         bool isPressed = false;
-        float lastActiveTime = 0.0f;
     };
     KeyState m_keys[1024];
-    const float m_threshold = 0.1f;
-
-    bool CheckKey(int key);
 };
 
 #endif

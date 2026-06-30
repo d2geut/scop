@@ -15,63 +15,71 @@ void Context::Reshape(int width, int height) {
     glViewport(0, 0, m_width, m_height);
 }
 
-void Context::ProcessInput(GLFWwindow* window, float deltaTime) {
-    const float cameraSpeed = 2.0f * deltaTime;
-
-    if (Input::IsKeyDown(GLFW_KEY_W))
-        m_cameraPos += m_cameraFront * cameraSpeed;
-    if (Input::IsKeyDown(GLFW_KEY_S))
-        m_cameraPos -= m_cameraFront * cameraSpeed;
-
-    auto cameraRight = sglm::normalize(sglm::cross(m_cameraUp, -m_cameraFront));
-    if (Input::IsKeyDown(GLFW_KEY_D)) {
-        m_cameraPos += cameraRight * cameraSpeed;
-    }
-    if (Input::IsKeyDown(GLFW_KEY_A))
-        m_cameraPos -= cameraRight * cameraSpeed;    
-
-    auto cameraUp = sglm::normalize(sglm::cross(-m_cameraFront, cameraRight));
-    if (Input::IsKeyDown(GLFW_KEY_E))
-        m_cameraPos += cameraUp * cameraSpeed;
-    if (Input::IsKeyDown(GLFW_KEY_Q))
-        m_cameraPos -= cameraUp * cameraSpeed;
-
-    // space
-    if (Input::IsKeyDown(GLFW_KEY_SPACE))
+void Context::ProcessInput(GLFWwindow* window) {
+    if (Input::IsKeyDown(GLFW_KEY_LEFT_CONTROL))
         m_texmode ? (m_texmode = false) : (m_texmode = true);
 }
 
 void Context::MouseMove(double x, double y) {
     if (!m_cameraControl)
         return;
+
     auto pos = sglm::vec2((float)x, (float)y);
     auto deltaPos = pos - m_prevMousePos;
 
-    const float cameraRotSpeed = 0.5f;
-    m_cameraYaw -= deltaPos.x * cameraRotSpeed;
-    m_cameraPitch -= deltaPos.y * cameraRotSpeed;
+    if (m_cameraPosButton) {
+        auto cameraFront = m_cameraTarget - m_cameraPos;
+        auto cameraRight = sglm::normalize(sglm::cross(m_cameraUp, -cameraFront));
+        auto cameraUp = sglm::normalize(sglm::cross(-cameraFront, cameraRight));
 
-    if (m_cameraYaw < 0.0f)
-        m_cameraYaw += 360.0f;
-    if (m_cameraYaw > 360.0f)
-        m_cameraYaw -= 360.0f;
-    if (m_cameraPitch > 89.0f)
-        m_cameraPitch = 89.0f;
-    if (m_cameraPitch < -89.0f)
-        m_cameraPitch = -89.0f;
-    
+        const float cameraSpeed = m_cameraDistance * 0.001f;
+        m_cameraTarget -= cameraRight * deltaPos.x * cameraSpeed;
+        m_cameraTarget += cameraUp * deltaPos.y * cameraSpeed;
+    }
+    else {
+        const float cameraRotSpeed = 0.2f;
+        m_cameraYaw -= deltaPos.x * cameraRotSpeed;
+        m_cameraPitch += deltaPos.y * cameraRotSpeed;
+
+        if (m_cameraYaw < 0.0f)
+            m_cameraYaw += 360.0f;
+        if (m_cameraYaw > 360.0f)
+            m_cameraYaw -= 360.0f;
+        if (m_cameraPitch > 89.0f)
+            m_cameraPitch = 89.0f;
+        if (m_cameraPitch < -89.0f)
+            m_cameraPitch = -89.0f;
+    }
+    m_cameraPos.x = m_cameraTarget.x + m_cameraDistance * cos(sglm::radians(m_cameraPitch)) * sin(sglm::radians(m_cameraYaw));
+    m_cameraPos.y = m_cameraTarget.y + m_cameraDistance * sin(sglm::radians(m_cameraPitch));
+    m_cameraPos.z = m_cameraTarget.z + m_cameraDistance * cos(sglm::radians(m_cameraPitch)) * cos(sglm::radians(m_cameraYaw));
+
     m_prevMousePos = pos;
 }
 
+void Context::MouseScroll(double x, double y) {
+    const float cameraSpeed = 0.1f;
+    m_cameraDistance -= y * cameraSpeed;
+
+    if (m_cameraDistance < 0.1f)
+        m_cameraDistance = 0.1f;
+    
+    m_cameraPos.x = m_cameraTarget.x + m_cameraDistance * cos(sglm::radians(m_cameraPitch)) * sin(sglm::radians(m_cameraYaw));
+    m_cameraPos.y = m_cameraTarget.y + m_cameraDistance * sin(sglm::radians(m_cameraPitch));
+    m_cameraPos.z = m_cameraTarget.z + m_cameraDistance * cos(sglm::radians(m_cameraPitch)) * cos(sglm::radians(m_cameraYaw));
+}
+
 void Context::MouseButton(int button, int action, double x, double y) {
-    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+    if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
         if (action == GLFW_PRESS) {
-            // 마우스 조작 시작 시점에 현 마우스 커서 위치 저장
             m_prevMousePos = sglm::vec2((float)x, (float)y);
             m_cameraControl = true;
+            if (Input::IsKeyDown(GLFW_KEY_LEFT_SHIFT))
+                m_cameraPosButton = true;
         }
         else if (action == GLFW_RELEASE) {
             m_cameraControl = false;
+            m_cameraPosButton = false;
         }
     }
 }
@@ -80,17 +88,8 @@ void Context::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    sglm::vec4 cameraFront = sglm::rotate(sglm::mat4(1.0f), sglm::radians(m_cameraYaw), sglm::vec3(0.0f, 1.0f, 0.0f)) * sglm::rotate(sglm::mat4(1.0f), sglm::radians(m_cameraPitch), sglm::vec3(1.0f, 0.0f, 0.0f)) * sglm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
-    m_cameraFront = sglm::vec3(cameraFront.x, cameraFront.y, cameraFront.z);
     auto projection = sglm::perspective(sglm::radians(45.0f), (float)m_width / (float)m_height, 0.01f, 20.0f);
-    auto view = sglm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
-
-    // light cube
-    // auto lightModelTransform = sglm::translate(sglm::mat4(1.0), m_light.position) * sglm::scale(sglm::mat4(1.0), sglm::vec3(0.1f));
-    // m_simpleProgram->Use();
-    // m_simpleProgram->SetUniform("color", sglm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
-    // m_simpleProgram->SetUniform("transform", projection * view * lightModelTransform);
-    // m_box->Draw();
+    auto view = sglm::lookAt(m_cameraPos, m_cameraTarget, m_cameraUp);
 
     // texmode on
     if (m_texmode) {
@@ -127,8 +126,6 @@ void Context::Render() {
         m_program2->SetUniform("light.ambient", m_light.ambient);
         m_program2->SetUniform("light.diffuse", m_light.diffuse);
         m_program2->SetUniform("light.specular", m_light.specular);
-        // m_program2->SetUniform("material.ambient", m_material.ambient);
-        // m_program2->SetUniform("material.diffuse", m_material.diffuse);
         m_program2->SetUniform("material.specular", m_material.specular);
         m_program2->SetUniform("material.shininess", m_material.shininess);
 
@@ -145,11 +142,6 @@ bool Context::Init(const std::string& filename) {
     m_model = Model::Load(filename);
     if (!m_model)
         return false;
-    // m_box = Mesh::CreateBox();
-
-    // m_simpleProgram = Program::Create("./shader/simple.vs", "./shader/simple.fs");
-    // if (!m_simpleProgram)
-    //     return false;
 
     m_program = Program::Create("./shader/lighting.vs", "./shader/lighting.fs");
     if (!m_program)

@@ -30,6 +30,12 @@ void OnMouseButton(GLFWwindow* window, int button, int action, int modifier) {
     context->MouseButton(button, action, x, y);
 }
 
+void OnScrollEvent(GLFWwindow* window, double x, double y) {
+    auto context = (Context*)glfwGetWindowUserPointer(window);
+    context->MouseScroll(x, y);
+}
+
+
 int main(int argc, char **argv)
 {
     std::cout << "Program Start!" << std::endl;
@@ -80,21 +86,11 @@ int main(int argc, char **argv)
     glfwSetKeyCallback(window, Input::OnKeyEvent);
     glfwSetCursorPosCallback(window, OnCursorPos);
     glfwSetMouseButtonCallback(window, OnMouseButton);
+    glfwSetScrollCallback(window, OnScrollEvent);
 
-    // model.cpp test code
-    // ModelUPtr m_model = Model::Load("model/test.obj");
-
-    // glfw loop
-    std::cout << "Start main loop" << std::endl;
-
-    float currentFrame, lastFrame, deltaTime = 0;
     while (!glfwWindowShouldClose(window)) {
-        currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-
         glfwPollEvents();
-        context->ProcessInput(window, deltaTime);
+        context->ProcessInput(window);
         context->Render();
         glfwSwapBuffers(window);
     }

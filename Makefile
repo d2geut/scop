@@ -1,6 +1,6 @@
 NAME = scop
 CXX = c++
-CXFLAGS = -Wall -Wextra -Werror
+CXXFLAGS = -g
 RM = rm -f
 
 SRCSDIR = ./src

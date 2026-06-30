@@ -28,10 +28,8 @@ private:
     bool Init(const std::string& filename);
     ProgramUPtr m_program;
     ProgramUPtr m_program2;
-    ProgramUPtr m_simpleProgram;
 
     ModelUPtr m_model;
-    MeshUPtr m_box;
 
     // window size
     int m_width { Constants::WindowWidth };
